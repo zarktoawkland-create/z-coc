@@ -869,6 +869,87 @@
                 border-color: rgba(195,161,90,.28);
                 box-shadow: inset 0 1px 0 rgba(255,255,255,.04), 0 0 18px rgba(195,161,90,.08);
             }
+            .z-mobile-nav-scrim {
+                position: fixed;
+                inset: 0;
+                z-index: 41;
+                background: rgba(0,0,0,.46);
+                backdrop-filter: blur(3px);
+                -webkit-backdrop-filter: blur(3px);
+            }
+            .z-mobile-subnav {
+                position: fixed;
+                left: 10px;
+                right: 10px;
+                bottom: calc(4.25rem + env(safe-area-inset-bottom));
+                z-index: 50;
+                max-height: min(60dvh, 22rem);
+                padding: 14px;
+                overflow-y: auto;
+                border: 1px solid rgba(174,163,142,.24);
+                border-radius: 20px;
+                background: linear-gradient(160deg, rgba(18,28,35,.98), rgba(5,11,17,.98));
+                box-shadow: 0 18px 50px rgba(0,0,0,.52), inset 0 1px 0 rgba(255,255,255,.05);
+                animation: z-mobile-subnav-in .2s ease-out both;
+            }
+            .z-mobile-subnav-heading {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 10px;
+                padding: 2px 2px 11px;
+                color: #d9c991;
+                font-size: .68rem;
+                font-weight: 700;
+                letter-spacing: .16em;
+                text-transform: uppercase;
+            }
+            .z-mobile-subnav-heading span:last-child {
+                color: rgba(156,168,164,.64);
+                font-size: .58rem;
+                letter-spacing: .08em;
+            }
+            .z-mobile-subnav-list { display: grid; gap: 8px; }
+            .z-mobile-subnav-list button {
+                min-height: 54px;
+                width: 100%;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 9px 11px;
+                color: #a5b0ab;
+                text-align: left;
+                border: 1px solid rgba(142,157,151,.14);
+                border-radius: 13px;
+                background: rgba(255,255,255,.025);
+                transition: color .2s ease, background-color .2s ease, border-color .2s ease, transform .2s ease;
+            }
+            .z-mobile-subnav-list button:active { transform: scale(.985); }
+            .z-mobile-subnav-list button:hover,
+            .z-mobile-subnav-list button.z-mobile-subnav-active {
+                color: #e2d49e;
+                border-color: rgba(195,161,90,.36);
+                background: rgba(195,161,90,.1);
+            }
+            .z-mobile-subnav-icon {
+                width: 34px;
+                height: 34px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                flex: 0 0 34px;
+                color: #b89a58;
+                border: 1px solid rgba(195,161,90,.28);
+                border-radius: 10px;
+                background: rgba(195,161,90,.06);
+            }
+            .z-mobile-subnav-copy { min-width: 0; display: grid; gap: 2px; }
+            .z-mobile-subnav-copy strong { color: inherit; font-size: .84rem; font-weight: 700; }
+            .z-mobile-subnav-copy small { color: rgba(166,178,173,.66); font-size: .64rem; }
+            @keyframes z-mobile-subnav-in {
+                from { opacity: 0; transform: translateY(8px) scale(.98); }
+                to { opacity: 1; transform: translateY(0) scale(1); }
+            }
             .mobile-nav-safe { padding-bottom: 5rem; }
             .z-system-ui .app-mobile-header { margin: 7px 8px 0; min-height: 60px; border-radius: 18px; }
             /* Keep the original archive UI, but make it behave like a native
@@ -4318,28 +4399,49 @@
         <!-- Mobile keeps the original sidebar order and icon language. The
              labels stay available to screen readers and long-press tooltips;
              the visual bar intentionally contains icons only. -->
+        <div v-if="showMobileUtilityMenu && cocState.gameState !== 'playing'" class="z-mobile-nav-scrim md:hidden" @click="showMobileUtilityMenu = false" aria-hidden="true"></div>
+        <section v-if="showMobileUtilityMenu && cocState.gameState !== 'playing'" class="z-mobile-subnav md:hidden" role="dialog" aria-modal="true" aria-label="广播与手册">
+            <div class="z-mobile-subnav-heading">
+                <span>广播与手册</span>
+                <span>资料入口</span>
+            </div>
+            <div class="z-mobile-subnav-list">
+                <button type="button" @click="currentView = 'friends'; showMobileUtilityMenu = false; showMobileMenu = false" :class="{'z-mobile-subnav-active': currentView === 'friends'}" aria-label="收音机调频">
+                    <span class="z-mobile-subnav-icon" aria-hidden="true">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="1.6" stroke-linecap="round" d="M17 20h5v-2a3 3 0 0 0-5.36-1.86M17 20H7m10 0v-2a5 5 0 0 0-10 0v2m3-13a3 3 0 1 0-6 0 3 3 0 0 0 6 0Zm13 3a2 2 0 1 0-4 0 2 2 0 0 0 4 0Z"/></svg>
+                    </span>
+                    <span class="z-mobile-subnav-copy"><strong>收音机调频</strong><small>调查员与同伴的连接</small></span>
+                </button>
+                <button type="button" @click="currentView = 'broadcast'; showMobileUtilityMenu = false; showMobileMenu = false" :class="{'z-mobile-subnav-active': currentView === 'broadcast'}" aria-label="扎克托广播">
+                    <span class="z-mobile-subnav-icon" aria-hidden="true">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="1.6" stroke-linecap="round" d="M11 5.88v13.36a1.76 1.76 0 0 1-3.42.59l-2.14-6.15A4 4 0 0 1 7 6h1.83c4.1 0 7.63-1.23 9.17-3v14c-1.77-1.77-5.06-3-9.17-3H7a4 4 0 0 1-1.56-.32M18 7a3 3 0 0 1 0 6"/></svg>
+                    </span>
+                    <span class="z-mobile-subnav-copy"><strong>扎克托广播</strong><small>查看世界动态与广播记录</small></span>
+                </button>
+                <button type="button" @click="currentView = 'manual'; showMobileUtilityMenu = false; showMobileMenu = false" :class="{'z-mobile-subnav-active': currentView === 'manual'}" aria-label="调查员手册">
+                    <span class="z-mobile-subnav-icon" aria-hidden="true">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="1.6" stroke-linecap="round" d="M9.66 17h4.68M12 3v1m6.36 1.64-.7.7M21 12h-1M4 12H3m3.34-5.66-.7-.7m2.83 9.9a5 5 0 1 0 7.07 0l-.55-.55A3.37 3.37 0 0 1 14 18.47V19a2 2 0 0 1-4 0v-.53a3.37 3.37 0 0 0-.99-2.39l-.55-.55Z"/></svg>
+                    </span>
+                    <span class="z-mobile-subnav-copy"><strong>调查员手册</strong><small>查阅规则、流程与调查资料</small></span>
+                </button>
+            </div>
+        </section>
         <nav v-if="cocState.gameState !== 'playing'" class="z-mobile-bottom-nav md:hidden" aria-label="主导航">
             <div class="z-mobile-bottom-nav-scroll">
-                <button type="button" @click="currentView = 'chat'; showMobileMenu = false" :class="{'z-mobile-nav-active': currentView === 'chat'}" aria-label="聆听低语" title="聆听低语">
+                <button type="button" @click="currentView = 'chat'; showMobileMenu = false; showMobileUtilityMenu = false" :class="{'z-mobile-nav-active': currentView === 'chat'}" aria-label="聆听低语" title="聆听低语">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-width="1.6" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-5l-5 5v-5Z"/></svg>
                 </button>
-                <button type="button" @click="if(cocState.gameState !== 'playing') { currentView = 'coc'; showMobileMenu = false; }" :class="{'z-mobile-nav-active': currentView === 'coc'}" aria-label="仪式准备" title="仪式准备">
+                <button type="button" @click="if(cocState.gameState !== 'playing') { currentView = 'coc'; showMobileMenu = false; showMobileUtilityMenu = false; }" :class="{'z-mobile-nav-active': currentView === 'coc'}" aria-label="仪式准备" title="仪式准备">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="m10 8 5 4-5 4V8Z"/><circle cx="12" cy="12" r="9"/></svg>
                 </button>
-                <button type="button" @click="currentView = 'saves'; showMobileMenu = false" :class="{'z-mobile-nav-active': currentView === 'saves'}" aria-label="记忆回廊" title="记忆回廊">
+                <button type="button" @click="currentView = 'saves'; showMobileMenu = false; showMobileUtilityMenu = false" :class="{'z-mobile-nav-active': currentView === 'saves'}" aria-label="记忆回廊" title="记忆回廊">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-width="1.6" d="M5 8h14M5 8a2 2 0 1 0 0-4h14a2 2 0 1 0 0 4m-14 0v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8m-9 4h4"/></svg>
                 </button>
-                <button type="button" @click="currentView = 'tavern'; showMobileMenu = false" :class="{'z-mobile-nav-active': currentView === 'tavern'}" aria-label="异闻酒馆" title="异闻酒馆">
+                <button type="button" @click="currentView = 'tavern'; showMobileMenu = false; showMobileUtilityMenu = false" :class="{'z-mobile-nav-active': currentView === 'tavern'}" aria-label="异闻酒馆" title="异闻酒馆">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-width="1.6" d="M5 5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16l-7-3.5L5 21V5Z"/></svg>
                 </button>
-                <button type="button" @click="currentView = 'friends'; showMobileMenu = false" :class="{'z-mobile-nav-active': currentView === 'friends'}" aria-label="收音机调频" title="收音机调频">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-width="1.6" stroke-linecap="round" d="M17 20h5v-2a3 3 0 0 0-5.36-1.86M17 20H7m10 0v-2a5 5 0 0 0-10 0v2m3-13a3 3 0 1 0-6 0 3 3 0 0 0 6 0Zm13 3a2 2 0 1 0-4 0 2 2 0 0 0 4 0Z"/></svg>
-                </button>
-                <button type="button" @click="currentView = 'broadcast'; showMobileMenu = false" :class="{'z-mobile-nav-active': currentView === 'broadcast'}" aria-label="扎克托广播" title="扎克托广播">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-width="1.6" stroke-linecap="round" d="M11 5.88v13.36a1.76 1.76 0 0 1-3.42.59l-2.14-6.15A4 4 0 0 1 7 6h1.83c4.1 0 7.63-1.23 9.17-3v14c-1.77-1.77-5.06-3-9.17-3H7a4 4 0 0 1-1.56-.32M18 7a3 3 0 0 1 0 6"/></svg>
-                </button>
-                <button type="button" @click="currentView = 'manual'; showMobileMenu = false" :class="{'z-mobile-nav-active': currentView === 'manual'}" aria-label="调查员手册" title="调查员手册">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-width="1.6" stroke-linecap="round" d="M9.66 17h4.68M12 3v1m6.36 1.64-.7.7M21 12h-1M4 12H3m3.34-5.66-.7-.7m2.83 9.9a5 5 0 1 0 7.07 0l-.55-.55A3.37 3.37 0 0 1 14 18.47V19a2 2 0 0 1-4 0v-.53a3.37 3.37 0 0 0-.99-2.39l-.55-.55Z"/></svg>
+                <button type="button" @click="showMobileUtilityMenu = !showMobileUtilityMenu; showMobileMenu = false" :class="{'z-mobile-nav-active': showMobileUtilityMenu || ['friends', 'broadcast', 'manual'].includes(currentView)}" aria-label="广播与手册" title="广播与手册" :aria-expanded="showMobileUtilityMenu">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M12 3.5a2 2 0 0 1 1.94 1.5 7.44 7.44 0 0 1 1.86.77 2 2 0 0 1 2.43-.22l.48.48a2 2 0 0 1-.22 2.43 7.44 7.44 0 0 1 .77 1.86A2 2 0 0 1 20.75 12a2 2 0 0 1-1.5 1.94 7.44 7.44 0 0 1-.77 1.86 2 2 0 0 1 .22 2.43l-.48.48a2 2 0 0 1-2.43-.22 7.44 7.44 0 0 1-1.86.77 2 2 0 0 1-1.94 1.5 2 2 0 0 1-1.94-1.5 7.44 7.44 0 0 1-1.86-.77 2 2 0 0 1-2.43.22l-.48-.48a2 2 0 0 1 .22-2.43 7.44 7.44 0 0 1-.77-1.86A2 2 0 0 1 3.25 12a2 2 0 0 1 1.5-1.94 7.44 7.44 0 0 1 .77-1.86 2 2 0 0 1-.22-2.43l.48-.48a2 2 0 0 1 2.43.22 7.44 7.44 0 0 1 1.86-.77A2 2 0 0 1 12 3.5Z"/><circle cx="12" cy="12" r="2.7" stroke-width="1.6"/></svg>
                 </button>
                 <button type="button" @click="openCocCard" aria-label="调查员档案" title="调查员档案">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5.59a1 1 0 0 1 .7.29l5.42 5.42a1 1 0 0 1 .29.7V19a2 2 0 0 1-2 2Z"/></svg>
@@ -4596,6 +4698,7 @@
                 // 启动仪式退场后优先展示「聆听低语」；显式的跨页模组操作仍可覆盖此默认值。
                 const currentView = ref('chat');
                 const showMobileMenu = ref(false);
+                const showMobileUtilityMenu = ref(false);
                 const showMobileRightSidebar = ref(false);
                 const mobileSettingsSection = ref('menu');
                 const mobileSettingsGroups = [
@@ -8647,7 +8750,7 @@ ${buildInvestigatorProfile(inv)}
                 });
 
                 return {
-                    currentView, showMobileMenu, showMobileRightSidebar, mobileSettingsSection, mobileSettingsGroups, mobileSettingsTitle, openMobileSettingsSection, backMobileSettings, user, settings, toasts, confirmState, authState, handleAuth, handleLogout, showBroadcast, dontShowBroadcast, closeBroadcast,
+                    currentView, showMobileMenu, showMobileUtilityMenu, showMobileRightSidebar, mobileSettingsSection, mobileSettingsGroups, mobileSettingsTitle, openMobileSettingsSection, backMobileSettings, user, settings, toasts, confirmState, authState, handleAuth, handleLogout, showBroadcast, dontShowBroadcast, closeBroadcast,
                     kpRulesByCategory, editingRuleId, toggleRuleEdit, resetRule, addKpRule, deleteKpRule,
                     cocState, cocInput, cocInputRef, cocChatContainer, isGenerating, multiplayerState, showJoinInput, joinRoomId, friends, friendRequests, friendInput,
                     showMentionList, mentionCandidates, handleInput, selectMention, savedGames, savesFilter, groupedSaves, openFolders, toggleFolder, moveSaveToFolder, renameFolder, 
