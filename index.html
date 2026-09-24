@@ -188,48 +188,6 @@
             opacity:0;
             animation:zLaunchCopyIn .8s ease-out forwards;
         }
-        /* Product shell upgrades: mobile navigation, calmer empty states and
-           accessible focus treatment. Keep the visual language of the archive
-           while making the next action obvious on small screens. */
-        :where(button, a, input, textarea, select):focus-visible {
-            outline: 2px solid rgba(212,175,55,.9);
-            outline-offset: 3px;
-        }
-        .z-mobile-bottom-nav {
-            padding-bottom: max(.55rem, env(safe-area-inset-bottom));
-            background: linear-gradient(180deg, rgba(5,9,15,.78), rgba(2,6,12,.98));
-            box-shadow: 0 -14px 34px rgba(0,0,0,.28);
-            backdrop-filter: blur(18px);
-        }
-        .z-mobile-bottom-nav button {
-            min-height: 3.3rem;
-            color: #82909b;
-            transition: color .2s ease, transform .2s ease, background-color .2s ease;
-        }
-        .z-mobile-bottom-nav button:active { transform: scale(.96); }
-        .z-mobile-bottom-nav button.z-bottom-active {
-            color: #e7c96e;
-            background: rgba(183,148,77,.1);
-        }
-        .z-home-hero {
-            background:
-                radial-gradient(circle at 20% 15%, rgba(77,152,142,.18), transparent 36%),
-                linear-gradient(135deg, rgba(8,22,28,.95), rgba(5,9,15,.82));
-            border: 1px solid rgba(77,152,142,.2);
-            box-shadow: 0 24px 70px rgba(0,0,0,.24);
-        }
-        .z-home-action {
-            min-height: 7.2rem;
-            transition: border-color .2s ease, background-color .2s ease, transform .2s ease;
-        }
-        .z-home-action:hover { transform: translateY(-2px); }
-        .z-home-action:active { transform: translateY(0) scale(.99); }
-        @media (min-width: 768px) {
-            .z-mobile-bottom-nav { display: none; }
-        }
-        @media (prefers-reduced-motion: reduce) {
-            .z-home-action, .z-mobile-bottom-nav button { transition: none; }
-        }
         .z-launch-kicker {
             color:rgba(77,152,142,.78);
             font:600 clamp(8px,1.5vw,10px)/1 var(--z-ui-gothic);
@@ -1761,7 +1719,6 @@
         (() => {
             const screen = document.getElementById('z-launch-screen');
             if (!screen) return;
-            const launchSeenKey = 'z_coc_launch_seen_v2';
             let closed = false;
             let mountRequested = false;
             let appMounted = false;
@@ -1770,7 +1727,6 @@
             const finishLaunch = () => {
                 if (closed) return;
                 closed = true;
-                try { localStorage.setItem(launchSeenKey, '1'); } catch (e) { /* private browsing */ }
                 screen.classList.add('is-leaving');
                 window.setTimeout(() => screen.remove(), 900);
                 window.removeEventListener('keydown', onLaunchKey);
@@ -1799,17 +1755,12 @@
             window.addEventListener('keydown', onLaunchKey);
             window.addEventListener('z-coc:app-mounted', onAppMounted);
             const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-            let hasSeenLaunch = false;
-            try { hasSeenLaunch = localStorage.getItem(launchSeenKey) === '1'; } catch (e) { /* private browsing */ }
             const art = screen.querySelector('.z-launch-art');
             const decoded = art?.decode ? art.decode().catch(() => undefined) : Promise.resolve();
             decoded.then(() => {
                 requestAnimationFrame(() => {
                     screen.classList.add('is-ready');
-                    // The ritual is a first-visit welcome, not a loading gate.
-                    // Returning users go straight to the app shell while keeping
-                    // the skip button available for the first visit.
-                    const delay = hasSeenLaunch || reduceMotion ? 120 : 3650;
+                    const delay = reduceMotion ? 350 : 3650;
                     settleTimer = window.setTimeout(requestAppMount, delay);
                 });
             });
@@ -2026,51 +1977,51 @@
                 <button @click="currentView = 'chat'; showMobileMenu = false" :class="['z-sidebar-tab w-full flex items-center px-4 py-3.5 rounded-lg transition-all duration-300 font-bold tracking-wide border group relative overflow-hidden', currentView === 'chat' ? 'z-active bg-mystic-green/10 border-mystic-green/40 text-mystic-green shadow-glow-green' : 'border-transparent text-slate-400 hover:text-slate-200 hover:bg-dark-800 hover:border-dark-700']">
                     <div class="absolute inset-0 bg-gradient-to-r from-mystic-green/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                     <svg class="w-5 h-5 mr-3 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
-                    <span class="relative z-10">跑团大厅</span>
+                    <span class="relative z-10">聆听低语</span>
                 </button>
                 <button @click="if(cocState.gameState !== 'playing') { currentView = 'coc'; showMobileMenu = false; }" :class="['z-sidebar-tab w-full flex items-center px-4 py-3.5 rounded-lg transition-all duration-300 font-bold tracking-wide border group relative overflow-hidden', currentView === 'coc' ? 'z-active bg-mystic-gold/10 border-mystic-gold/40 text-mystic-gold shadow-glow-gold' : (cocState.gameState === 'playing' ? 'opacity-50 cursor-not-allowed text-slate-600 border-transparent' : 'border-transparent text-slate-400 hover:text-slate-200 hover:bg-dark-800 hover:border-dark-700')]">
                     <div class="absolute inset-0 bg-gradient-to-r from-mystic-gold/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                     <svg class="w-5 h-5 mr-3 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    <span class="relative z-10">开始跑团</span>
+                    <span class="relative z-10">仪式准备</span>
                 </button>
                 <button @click="currentView = 'saves'; showMobileMenu = false" :class="['z-sidebar-tab w-full flex items-center px-4 py-3.5 rounded-lg transition-all duration-300 font-bold tracking-wide border group relative overflow-hidden', currentView === 'saves' ? 'z-active bg-indigo-900/20 border-indigo-500/30 text-indigo-400' : 'border-transparent text-slate-400 hover:text-slate-200 hover:bg-dark-800 hover:border-dark-700']">
                     <div class="absolute inset-0 bg-gradient-to-r from-indigo-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                     <svg class="w-5 h-5 mr-3 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path></svg>
-                    <span class="relative z-10">存档</span>
+                    <span class="relative z-10">记忆回廊</span>
                 </button>
                 <button @click="currentView = 'tavern'; showMobileMenu = false" :class="['z-sidebar-tab w-full flex items-center px-4 py-3.5 rounded-lg transition-all duration-300 font-bold tracking-wide border group relative overflow-hidden', currentView === 'tavern' ? 'z-active bg-amber-900/20 border-amber-500/30 text-amber-400' : 'border-transparent text-slate-400 hover:text-slate-200 hover:bg-dark-800 hover:border-dark-700']">
                     <div class="absolute inset-0 bg-gradient-to-r from-amber-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                     <svg class="w-5 h-5 mr-3 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
-                    <span class="relative z-10">创作酒馆</span>
+                    <span class="relative z-10">异闻酒馆</span>
                 </button>
                 <button @click="currentView = 'friends'; showMobileMenu = false" :class="['z-sidebar-tab w-full flex items-center px-4 py-3.5 rounded-lg transition-all duration-300 font-bold tracking-wide border group relative overflow-hidden', currentView === 'friends' ? 'z-active bg-blue-900/20 border-blue-500/30 text-blue-400' : 'border-transparent text-slate-400 hover:text-slate-200 hover:bg-dark-800 hover:border-dark-700']">
                     <div class="absolute inset-0 bg-gradient-to-r from-blue-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                     <svg class="w-5 h-5 mr-3 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-                    <span class="relative z-10">同伴</span>
+                    <span class="relative z-10">收音机调频</span>
                 </button>
                 <button @click="currentView = 'broadcast'; showMobileMenu = false" :class="['z-sidebar-tab w-full flex items-center px-4 py-3.5 rounded-lg transition-all duration-300 font-bold tracking-wide border group relative overflow-hidden', currentView === 'broadcast' ? 'z-active bg-amber-900/10 border-amber-500/40 text-amber-500 shadow-glow-gold' : 'border-transparent text-slate-400 hover:text-slate-200 hover:bg-dark-800 hover:border-dark-700']">
                     <div class="absolute inset-0 bg-gradient-to-r from-amber-900/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                     <svg class="w-5 h-5 mr-3 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path></svg>
-                    <span class="relative z-10">更新</span>
+                    <span class="relative z-10">扎克托广播</span>
                 </button>
                 <button @click="currentView = 'manual'; showMobileMenu = false" :class="['z-sidebar-tab w-full flex items-center px-4 py-3.5 rounded-lg transition-all duration-300 font-bold tracking-wide border group relative overflow-hidden', currentView === 'manual' ? 'z-active bg-mystic-green/10 border-mystic-green/40 text-mystic-green' : 'border-transparent text-slate-400 hover:text-slate-200 hover:bg-dark-800 hover:border-dark-700']">
                     <div class="absolute inset-0 bg-gradient-to-r from-mystic-green/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                     <svg class="w-5 h-5 mr-3 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.989-2.386l-.548-.547z"></path></svg>
-                    <span class="relative z-10">使用指南</span>
+                    <span class="relative z-10">调查员手册</span>
                 </button>
                 <button @click="openCocCard" 
                         :class="['w-full flex items-center px-4 py-3.5 rounded-lg transition-all duration-300 font-bold tracking-wide border group relative overflow-hidden border-transparent', cocState.gameState === 'playing' ? 'opacity-50 cursor-not-allowed' : 'text-slate-400 hover:text-slate-200 hover:bg-dark-800 hover:border-dark-700']"
                         :title="cocState.gameState === 'playing' ? '游戏进行中，暂不可进入档案' : ''">
                     <div class="absolute inset-0 bg-gradient-to-r from-mystic-purple/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                     <svg class="w-5 h-5 mr-3 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                    <span class="relative z-10">调查员</span>
+                    <span class="relative z-10">调查员档案</span>
                 </button>
                 <button @click="openLibrary" 
                         :class="['w-full flex items-center px-4 py-3.5 rounded-lg transition-all duration-300 font-bold tracking-wide border group relative overflow-hidden border-transparent', cocState.gameState === 'playing' ? 'opacity-50 cursor-not-allowed' : 'text-slate-400 hover:text-slate-200 hover:bg-dark-800 hover:border-dark-700']"
                         :title="cocState.gameState === 'playing' ? '游戏进行中，暂不可进入图书馆' : ''">
                     <div class="absolute inset-0 bg-gradient-to-r from-purple-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                     <svg class="w-5 h-5 mr-3 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
-                    <span class="relative z-10">图书馆</span>
+                    <span class="relative z-10">密大图书馆</span>
                 </button>
                 <button v-if="settings.enableCharReview" @click="currentView = 'charReview'; showMobileMenu = false" 
                         :class="['z-sidebar-tab w-full flex items-center px-4 py-3.5 rounded-lg transition-all duration-300 font-bold tracking-wide border group relative overflow-hidden', currentView === 'charReview' ? 'z-active bg-mystic-purple/20 border-mystic-purple/40 text-mystic-purple shadow-glow-purple' : 'border-transparent text-slate-400 hover:text-slate-200 hover:bg-dark-800 hover:border-dark-700']">
@@ -2105,8 +2056,8 @@
         </div>
 
         <!-- Broadcast Modal (Zarkto's Old Broadcast) -->
-        <div v-if="showBroadcast" class="fixed inset-x-0 bottom-0 z-[300] pointer-events-none flex justify-center p-3 md:p-6 animate-fade-in safe-pb">
-            <div class="pointer-events-auto bg-dark-900/95 border border-mystic-gold/50 rounded-xl shadow-[0_0_50px_rgba(212,175,55,0.3)] max-w-lg w-full max-h-[min(78vh,720px)] flex flex-col relative overflow-hidden">
+        <div v-if="showBroadcast" class="fixed inset-0 z-[300] bg-black/80 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in">
+            <div class="bg-dark-900 border border-mystic-gold/50 rounded-xl shadow-[0_0_50px_rgba(212,175,55,0.15)] max-w-lg w-full flex flex-col relative overflow-hidden">
                 <div class="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-mystic-gold/10 to-transparent pointer-events-none"></div>
                 <div class="absolute -top-10 -right-10 w-40 h-40 bg-mystic-gold/5 rounded-full blur-3xl pointer-events-none"></div>
                 
@@ -2164,13 +2115,13 @@
                             <input type="checkbox" v-model="dontShowBroadcast" class="checkbox checkbox-xs border-slate-600 checked:border-mystic-gold checked:bg-mystic-gold rounded-sm transition-all" />
                             <span class="text-xs text-slate-500 group-hover:text-slate-300 transition-colors select-none">不再收听此频段</span>
                         </label>
-                        <button @click="closeBroadcast" class="px-6 py-2 bg-mystic-gold hover:bg-yellow-600 text-dark-900 font-bold rounded shadow-lg shadow-mystic-gold/20 transition-all text-sm font-serif">稍后查看</button>
+                        <button @click="closeBroadcast" class="px-6 py-2 bg-mystic-gold hover:bg-yellow-600 text-dark-900 font-bold rounded shadow-lg shadow-mystic-gold/20 transition-all text-sm font-serif">关闭通讯</button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div :class="['flex-1 flex flex-col h-full overflow-hidden relative bg-black/20', cocState.gameState === 'playing' ? '' : 'pb-20 md:pb-0']">
+        <div class="flex-1 flex flex-col h-full overflow-hidden relative bg-black/20">
             <div class="absolute inset-0 pointer-events-none overflow-hidden flex items-center justify-center animate-fade-in-bg">
                 <svg class="w-[800px] h-[800px] text-mystic-gold/70" viewBox="0 0 24 24" fill="currentColor"><path d="M12,2C6.48,2,2,6.48,2,12c0,5.52,4.48,10,10,10s10-4.48,10-10C22,6.48,17.52,2,12,2z M12,20c-4.41,0-8-3.59-8-8 c0-4.41,3.59-8,8-8s8,3.59,8,8C20,16.41,16.41,20,12,20z M12,6c-3.31,0-6,2.69-6,6c0,1.36,0.46,2.61,1.23,3.62l1.46-1.46 C8.26,13.61,8,12.84,8,12c0-2.21,1.79-4,4-4s4,1.79,4,4c0,0.84-0.26,1.61-0.69,2.16l1.46,1.46C17.54,14.61,18,13.36,18,12 C18,8.69,15.31,6,12,6z M12,10c-1.1,0-2,0.9-2,2c0,0.55,0.22,1.05,0.59,1.41l2.83-2.83C13.05,10.22,12.55,10,12,10z"/></svg>
             </div>
@@ -2197,39 +2148,11 @@
             <!-- Views -->
             <!-- 1. Chat View (New) -->
             <div v-if="currentView === 'chat'" class="z-art-view z-art-chat flex-1 flex flex-col h-full bg-dark-950">
-                <div v-if="cocState.gameState !== 'playing'" class="flex-1 overflow-y-auto px-4 py-6 md:p-10 bg-dark-950">
-                    <div class="max-w-5xl mx-auto space-y-6 md:space-y-8">
-                        <section class="z-home-hero rounded-3xl p-6 md:p-10 relative overflow-hidden">
-                            <div class="absolute -right-16 -top-20 w-64 h-64 rounded-full border border-mystic-gold/10 opacity-60"></div>
-                            <div class="absolute -right-4 -top-8 w-44 h-44 rounded-full border border-mystic-gold/10 opacity-40"></div>
-                            <div class="relative max-w-2xl">
-                                <div class="flex items-center gap-2 text-[10px] font-mono uppercase tracking-[.24em] text-mystic-green/80 mb-4"><span class="w-2 h-2 rounded-full bg-mystic-green shadow-[0_0_12px_rgba(45,212,191,.8)]"></span>Archive ready</div>
-                                <h1 class="text-3xl md:text-5xl font-bold text-slate-100 font-serif tracking-wide leading-tight">准备好进入下一场调查了吗？</h1>
-                                <p class="mt-4 text-sm md:text-base text-slate-400 leading-relaxed max-w-xl">从一个调查员或一份模组开始。你的进度会保存在本地，并可在连接云端后跨设备继续。</p>
-                                <div class="flex flex-wrap gap-3 mt-7">
-                                    <button @click="currentView = 'coc'; showMobileMenu = false" class="px-5 py-3 rounded-xl bg-mystic-gold text-dark-950 font-bold shadow-[0_10px_26px_rgba(212,175,55,.18)] hover:bg-yellow-500 transition-colors">开始一场跑团</button>
-                                    <button @click="currentView = 'saves'; showMobileMenu = false" class="px-5 py-3 rounded-xl border border-dark-600 bg-dark-900/50 text-slate-300 font-bold hover:border-mystic-gold/60 hover:text-mystic-gold transition-colors">查看存档</button>
-                                </div>
-                            </div>
-                        </section>
-
-                        <section class="grid grid-cols-3 gap-3 md:gap-4" aria-label="档案概览">
-                            <div class="rounded-2xl border border-dark-800 bg-dark-900/60 p-4 md:p-5"><div class="text-[10px] uppercase tracking-widest text-slate-500">调查员</div><div class="mt-2 text-2xl md:text-3xl font-bold text-mystic-gold font-mono">{{ cocState.investigators.length }}</div><div class="mt-1 text-xs text-slate-600">本地档案</div></div>
-                            <div class="rounded-2xl border border-dark-800 bg-dark-900/60 p-4 md:p-5"><div class="text-[10px] uppercase tracking-widest text-slate-500">存档</div><div class="mt-2 text-2xl md:text-3xl font-bold text-indigo-300 font-mono">{{ savedGames.length }}</div><div class="mt-1 text-xs text-slate-600">可继续调查</div></div>
-                            <div class="rounded-2xl border border-dark-800 bg-dark-900/60 p-4 md:p-5"><div class="text-[10px] uppercase tracking-widest text-slate-500">云端</div><div class="mt-2 text-sm md:text-base font-bold" :class="authState.isLoggedIn ? 'text-mystic-green' : 'text-slate-400'">{{ authState.isLoggedIn ? '已连接' : '未连接' }}</div><div class="mt-1 text-xs text-slate-600">{{ authState.isLoggedIn ? '自动同步中' : '登录后跨设备同步' }}</div></div>
-                        </section>
-
-                        <section class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <button @click="currentView = 'coc'; showMobileMenu = false" class="z-home-action text-left rounded-2xl border border-mystic-gold/20 bg-mystic-gold/[.04] p-5 hover:border-mystic-gold/60 hover:bg-mystic-gold/[.08]">
-                                <div class="text-2xl mb-4">◈</div><div class="font-bold text-slate-200">创建新调查</div><p class="mt-2 text-xs leading-relaxed text-slate-500">导入模组，选择调查员，立即开始。</p>
-                            </button>
-                            <button @click="currentView = 'friends'; showMobileMenu = false" class="z-home-action text-left rounded-2xl border border-blue-400/20 bg-blue-400/[.03] p-5 hover:border-blue-400/60 hover:bg-blue-400/[.07]">
-                                <div class="text-2xl mb-4">♧</div><div class="font-bold text-slate-200">和同伴联机</div><p class="mt-2 text-xs leading-relaxed text-slate-500">创建或加入房间，一起推进调查。</p>
-                            </button>
-                            <button @click="openLibrary(); showMobileMenu = false" class="z-home-action text-left rounded-2xl border border-purple-400/20 bg-purple-400/[.03] p-5 hover:border-purple-400/60 hover:bg-purple-400/[.07]">
-                                <div class="text-2xl mb-4">⌘</div><div class="font-bold text-slate-200">探索模组图书馆</div><p class="mt-2 text-xs leading-relaxed text-slate-500">寻找公开模组，或分享你的创作。</p>
-                            </button>
-                        </section>
+                <div v-if="cocState.gameState !== 'playing'" class="flex-1 flex items-center justify-center text-slate-500 font-serif italic">
+                    <div class="text-center">
+                        <svg class="w-16 h-16 mx-auto mb-4 text-dark-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+                        <p>暂无进行中的跑团会话</p>
+                        <button @click="currentView = 'coc'" class="mt-4 px-4 py-2 bg-dark-800 border border-dark-600 rounded hover:border-mystic-gold hover:text-mystic-gold transition-colors text-sm">前往仪式准备</button>
                     </div>
                 </div>
                 <div v-else class="flex-1 flex flex-col h-full overflow-hidden relative">
@@ -4327,31 +4250,6 @@
                 </div>
             </div>
         </div>
-
-        <!-- Primary mobile navigation. The full archive remains available from
-             the menu; these five destinations keep the daily loop reachable. -->
-        <nav v-if="cocState.gameState !== 'playing'" class="z-mobile-bottom-nav fixed bottom-0 left-0 right-0 z-40 md:hidden grid grid-cols-5 gap-1 px-2 pt-2" aria-label="主要导航">
-            <button type="button" @click="currentView = 'chat'; showMobileMenu = false" :class="{'z-bottom-active': currentView === 'chat'}" class="rounded-xl flex flex-col items-center justify-center gap-1" aria-label="跑团大厅">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
-                <span class="text-[10px] font-bold">大厅</span>
-            </button>
-            <button type="button" @click="if(cocState.gameState !== 'playing') { currentView = 'coc'; showMobileMenu = false; }" :class="{'z-bottom-active': currentView === 'coc'}" class="rounded-xl flex flex-col items-center justify-center gap-1" aria-label="开始跑团">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" d="m9 5 7 7-7 7"/><circle cx="12" cy="12" r="9"/></svg>
-                <span class="text-[10px] font-bold">开始</span>
-            </button>
-            <button type="button" @click="currentView = 'saves'; showMobileMenu = false" :class="{'z-bottom-active': currentView === 'saves'}" class="rounded-xl flex flex-col items-center justify-center gap-1" aria-label="存档">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" d="M5 8h14M5 8a2 2 0 1 0 0-4h14a2 2 0 1 0 0 4m-14 0v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8"/></svg>
-                <span class="text-[10px] font-bold">存档</span>
-            </button>
-            <button type="button" @click="openLibrary(); showMobileMenu = false" :class="{'z-bottom-active': currentView === 'library'}" class="rounded-xl flex flex-col items-center justify-center gap-1" aria-label="图书馆">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" d="M4 19V5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2Zm0 0a2 2 0 0 0 2 2h13"/></svg>
-                <span class="text-[10px] font-bold">图书馆</span>
-            </button>
-            <button type="button" @click="currentView = 'settings'; showMobileMenu = false" :class="{'z-bottom-active': currentView === 'settings'}" class="rounded-xl flex flex-col items-center justify-center gap-1" aria-label="我的设置">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm7 8a7 7 0 0 0-14 0"/></svg>
-                <span class="text-[10px] font-bold">我的</span>
-            </button>
-        </nav>
     </div>
 
     <script>
@@ -5728,9 +5626,8 @@
                 const closeBroadcast = () => { showBroadcast.value = false; if (dontShowBroadcast.value) localStorage.setItem('coc_broadcast_read_version', currentVersion); };
                 const openCocCard = () => { 
                     if (cocState.gameState === 'playing') return showToast('游戏进行中，请先保存进度或结团后再进入调查员档案', 'warning');
-                    // Keep navigation in the same app surface. Opening a new
-                    // tab was easy to block on mobile and broke the user's flow.
-                    window.location.href = 'Workshop/index.html';
+                    if (window.ZCOC_RUNTIME.isNative) window.location.href = 'Workshop/index.html';
+                    else window.open('Workshop/index.html', '_blank');
                     showMobileMenu.value = false; 
                 };
                 
