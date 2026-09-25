@@ -4363,9 +4363,6 @@
              the visual bar intentionally contains icons only. -->
         <nav v-if="cocState.gameState !== 'playing'" class="z-mobile-bottom-nav md:hidden" aria-label="主导航">
             <div class="z-mobile-bottom-nav-scroll">
-                <button type="button" @click="currentView = 'chat'; showMobileMenu = false" :class="{'z-mobile-nav-active': currentView === 'chat'}" aria-label="聆听低语" title="聆听低语">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-width="1.6" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-5l-5 5v-5Z"/></svg>
-                </button>
                 <button type="button" @click="if(cocState.gameState !== 'playing') { currentView = 'coc'; showMobileMenu = false; }" :class="{'z-mobile-nav-active': currentView === 'coc'}" aria-label="仪式准备" title="仪式准备">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="m10 8 5 4-5 4V8Z"/><circle cx="12" cy="12" r="9"/></svg>
                 </button>
@@ -4374,6 +4371,9 @@
                 </button>
                 <button type="button" @click="currentView = 'archiveTools'; showMobileMenu = false" :class="{'z-mobile-nav-active': ['archiveTools', 'tavern', 'friends', 'broadcast', 'manual'].includes(currentView)}" aria-label="广播与手册" title="广播与手册">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="m12 3 9 5-9 5-9-5 9-5Zm-9 9 9 5 9-5M3 16l9 5 9-5"/></svg>
+                </button>
+                <button type="button" @click="currentView = 'chat'; showMobileMenu = false" :class="{'z-mobile-nav-active': currentView === 'chat'}" aria-label="聆听低语" title="聆听低语">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-width="1.6" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-5l-5 5v-5Z"/></svg>
                 </button>
                 <button type="button" @click="openCocCard" aria-label="调查员档案" title="调查员档案">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5.59a1 1 0 0 1 .7.29l5.42 5.42a1 1 0 0 1 .29.7V19a2 2 0 0 1-2 2Z"/></svg>
