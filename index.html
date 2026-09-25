@@ -2939,6 +2939,13 @@
                 </div>
                 <div class="settings-mobile-menu md:hidden" aria-label="广播与手册目录">
                     <div class="settings-mobile-group">
+                        <button type="button" class="settings-mobile-row" @click="currentView = 'tavern'; showMobileMenu = false">
+                            <span class="settings-mobile-icon" style="color:#d4af37;border-color:#d4af3738;background-color:#d4af3712">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M5 5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16l-7-3.5L5 21V5Z"/></svg>
+                            </span>
+                            <span class="settings-mobile-label">异闻酒馆</span>
+                            <svg class="settings-mobile-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                        </button>
                         <button type="button" class="settings-mobile-row" @click="currentView = 'friends'; showMobileMenu = false">
                             <span class="settings-mobile-icon" style="color:#d4af37;border-color:#d4af3738;background-color:#d4af3712">
                                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M17 20h5v-2a3 3 0 0 0-5.36-1.86M17 20H7m10 0v-2a5 5 0 0 0-10 0v2m3-13a3 3 0 1 0-6 0 3 3 0 0 0 6 0Zm13 3a2 2 0 1 0-4 0 2 2 0 0 0 4 0Z"/></svg>
@@ -4365,10 +4372,7 @@
                 <button type="button" @click="currentView = 'saves'; showMobileMenu = false" :class="{'z-mobile-nav-active': currentView === 'saves'}" aria-label="记忆回廊" title="记忆回廊">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-width="1.6" d="M5 8h14M5 8a2 2 0 1 0 0-4h14a2 2 0 1 0 0 4m-14 0v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8m-9 4h4"/></svg>
                 </button>
-                <button type="button" @click="currentView = 'tavern'; showMobileMenu = false" :class="{'z-mobile-nav-active': currentView === 'tavern'}" aria-label="异闻酒馆" title="异闻酒馆">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-width="1.6" d="M5 5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16l-7-3.5L5 21V5Z"/></svg>
-                </button>
-                <button type="button" @click="currentView = 'archiveTools'; showMobileMenu = false" :class="{'z-mobile-nav-active': ['archiveTools', 'friends', 'broadcast', 'manual'].includes(currentView)}" aria-label="广播与手册" title="广播与手册">
+                <button type="button" @click="currentView = 'archiveTools'; showMobileMenu = false" :class="{'z-mobile-nav-active': ['archiveTools', 'tavern', 'friends', 'broadcast', 'manual'].includes(currentView)}" aria-label="广播与手册" title="广播与手册">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="m12 3 9 5-9 5-9-5 9-5Zm-9 9 9 5 9-5M3 16l9 5 9-5"/></svg>
                 </button>
                 <button type="button" @click="openCocCard" aria-label="调查员档案" title="调查员档案">
