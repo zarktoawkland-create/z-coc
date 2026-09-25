@@ -48,7 +48,7 @@ return [
 如果网页和 PHP 接口使用同一个域名，不需要设置 `APP_ALLOWED_ORIGINS`。如果分开部署：
 
 1. 在服务器设置 `APP_ALLOWED_ORIGINS`，只填写完整的 HTTPS Origin，多个值用逗号分隔。
-2. 修改 `assets/js/runtime-config.js` 中的 `apiOrigin`，填入服务器 API 的 HTTPS Origin。
+2. 修改 `assets/js/runtime-config.js` 中的 `webApiOrigin` 和 `apiOrigin`，都填入服务器 API 的 HTTPS Origin。若网站暂时继续使用原后端，先让 `webApiOrigin` 保持空字符串，只有 App 指向新 API。
 3. 重新执行 `pnpm mobile:sync`，再生成 Android 包。
 
 ## 验证部署

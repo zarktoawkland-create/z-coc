@@ -21,10 +21,11 @@ Before building the native app, edit the public runtime configuration:
 
 ```js
 // assets/js/runtime-config.js
+webApiOrigin: 'https://api.your-domain.com',
 apiOrigin: 'https://api.your-domain.com'
 ```
 
-The value must be the HTTPS origin of the server that exposes `db_api.php`,
+Both values should point to the HTTPS origin of the server that exposes `db_api.php`,
 `room_api.php`, `library_api.php`, and `health.php`. Then run:
 
 ```text

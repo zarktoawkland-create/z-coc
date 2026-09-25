@@ -10,18 +10,33 @@
     } catch (error) {
         console.warn('Invalid ZCOC API origin; using the hosted backend.', error);
     }
+    const configuredWebOrigin = String(window.ZCOC_CONFIG?.webApiOrigin || '').trim();
+    let WEB_API_ORIGIN = '';
+    if (configuredWebOrigin) {
+        try {
+            const parsed = new URL(configuredWebOrigin);
+            if (parsed.protocol === 'https:' || parsed.protocol === 'http:') {
+                WEB_API_ORIGIN = parsed.origin;
+            }
+        } catch (error) {
+            console.warn('Invalid ZCOC web API origin; keeping same-origin requests.', error);
+        }
+    }
     const capacitor = window.Capacitor;
     const isNative = Boolean(capacitor && typeof capacitor.isNativePlatform === 'function' && capacitor.isNativePlatform());
 
     const apiUrl = (input) => {
         const value = String(input || '').trim();
-        if (!value || !isNative || /^(?:https?:)?\/\//i.test(value)) return value;
+        if (!value || /^(?:https?:)?\/\//i.test(value)) return value;
         const normalized = value.replace(/^(?:\.\.\/)+/, '').replace(/^\/+/, '');
+        if (!isNative && WEB_API_ORIGIN) return new URL(normalized, `${WEB_API_ORIGIN}/`).toString();
+        if (!isNative) return value;
         return new URL(normalized, `${API_ORIGIN}/`).toString();
     };
 
     window.ZCOC_RUNTIME = Object.freeze({
         apiOrigin: API_ORIGIN,
+        webApiOrigin: WEB_API_ORIGIN || null,
         apiUrl,
         isNative,
         platform: isNative && typeof capacitor.getPlatform === 'function' ? capacitor.getPlatform() : 'web',
