@@ -1,5 +1,15 @@
 (() => {
-    const API_ORIGIN = 'https://z-coc.zeabur.app';
+    const configuredOrigin = String(window.ZCOC_CONFIG?.apiOrigin || '').trim();
+    const fallbackOrigin = 'https://z-coc.zeabur.app';
+    let API_ORIGIN = fallbackOrigin;
+    try {
+        const parsed = new URL(configuredOrigin || fallbackOrigin);
+        if (parsed.protocol === 'https:' || parsed.protocol === 'http:') {
+            API_ORIGIN = parsed.origin;
+        }
+    } catch (error) {
+        console.warn('Invalid ZCOC API origin; using the hosted backend.', error);
+    }
     const capacitor = window.Capacitor;
     const isNative = Boolean(capacitor && typeof capacitor.isNativePlatform === 'function' && capacitor.isNativePlatform());
 

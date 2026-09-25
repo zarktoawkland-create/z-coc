@@ -1,8 +1,8 @@
 # z-coc Android App
 
 The Android app uses Capacitor 8 with a locally bundled frontend. Cloud accounts,
-cloud saves, multiplayer rooms, and the public library continue to use the
-production PHP API at `https://z-coc.zeabur.app`.
+cloud saves, multiplayer rooms, and the public library use the PHP API origin
+configured in `assets/js/runtime-config.js`.
 
 ## Build prerequisites
 
@@ -15,16 +15,29 @@ production PHP API at `https://z-coc.zeabur.app`.
 Android Studio uses its bundled runtime for the IDE. Command-line Gradle builds
 should use JDK 21 through `JAVA_HOME`. iOS builds require macOS and Xcode.
 
-## Zeabur API origin
+## Self-hosted API origin
 
-Set the website service environment variable below before testing account,
-library, or multiplayer features from the installed app:
+Before building the native app, edit the public runtime configuration:
 
-```text
-APP_ALLOWED_ORIGINS=https://localhost,capacitor://localhost
+```js
+// assets/js/runtime-config.js
+apiOrigin: 'https://api.your-domain.com'
 ```
 
-Keep the existing MySQL variables unchanged.
+The value must be the HTTPS origin of the server that exposes `db_api.php`,
+`room_api.php`, `library_api.php`, and `health.php`. Then run:
+
+```text
+pnpm mobile:sync
+```
+
+If the frontend and API share one domain, web requests are same-origin. For a
+separate frontend domain or a native Capacitor build, configure exact origins
+on the server:
+
+```text
+APP_ALLOWED_ORIGINS=https://app.your-domain.com,https://localhost,capacitor://localhost
+```
 
 ## Commands
 
