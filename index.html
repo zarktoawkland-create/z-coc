@@ -829,47 +829,142 @@
         @media (max-width: 767px) {
             .z-mobile-bottom-nav {
                 position: fixed;
-                left: 0;
-                right: 0;
-                bottom: 0;
+                left: max(8px, env(safe-area-inset-left));
+                right: max(8px, env(safe-area-inset-right));
+                bottom: max(8px, env(safe-area-inset-bottom));
                 z-index: 40;
-                padding: 6px 8px max(6px, env(safe-area-inset-bottom));
-                border-top: 1px solid rgba(174,163,142,.16);
-                background: linear-gradient(180deg, rgba(7,13,20,.92), rgba(2,7,12,.98));
-                box-shadow: 0 -12px 32px rgba(0,0,0,.34);
+                padding: 7px;
+                overflow: hidden;
+                border: 1px solid rgba(174,163,142,.2);
+                border-radius: 19px;
+                background:
+                    linear-gradient(180deg, rgba(13,22,28,.94), rgba(3,9,14,.98)),
+                    url("./assets/art/generated/dark-archive-cloth-texture.webp") center / 280px 280px repeat;
+                background-blend-mode: normal, soft-light;
+                box-shadow:
+                    0 18px 48px rgba(0,0,0,.5),
+                    inset 0 1px 0 rgba(255,255,255,.065),
+                    inset 0 0 0 1px rgba(0,0,0,.3);
                 backdrop-filter: blur(22px) saturate(125%);
                 -webkit-backdrop-filter: blur(22px) saturate(125%);
+            }
+            .z-mobile-bottom-nav::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 15%;
+                right: 15%;
+                height: 1px;
+                pointer-events: none;
+                background: linear-gradient(90deg, transparent, rgba(224,194,117,.62), rgba(77,168,151,.28), transparent);
+                box-shadow: 0 0 12px rgba(195,161,90,.22);
+            }
+            .z-mobile-bottom-nav::after {
+                content: "";
+                position: absolute;
+                inset: 1px;
+                pointer-events: none;
+                border: 1px solid rgba(255,255,255,.025);
+                border-radius: 18px;
             }
             .z-mobile-bottom-nav-scroll {
                 display: flex;
                 align-items: center;
-                justify-content: space-around;
-                gap: 4px;
+                justify-content: flex-start;
+                gap: 3px;
                 max-width: 100%;
                 overflow-x: auto;
+                padding: 0 1px;
                 scrollbar-width: none;
+                scroll-snap-type: x proximity;
             }
             .z-mobile-bottom-nav-scroll::-webkit-scrollbar { display: none; }
             .z-mobile-bottom-nav button {
-                flex: 0 0 48px;
-                width: 48px;
-                height: 46px;
+                position: relative;
+                flex: 1 0 44px;
+                width: auto;
+                min-width: 44px;
+                height: 48px;
                 display: inline-flex;
                 align-items: center;
                 justify-content: center;
                 color: #7f8984;
                 border: 1px solid transparent;
                 border-radius: 13px;
-                transition: color .2s ease, background-color .2s ease, border-color .2s ease, transform .2s ease;
+                scroll-snap-align: center;
+                transition: color .22s var(--z-ease), border-color .22s ease, transform .22s var(--z-ease), filter .22s ease;
             }
+            .z-mobile-bottom-nav button::before {
+                content: "";
+                position: absolute;
+                inset: 5px 3px;
+                z-index: 0;
+                border: 1px solid rgba(139,126,96,.18);
+                border-radius: 11px;
+                background:
+                    radial-gradient(circle at 18% 22%, rgba(91,113,91,.2) 0 1px, transparent 2px),
+                    radial-gradient(circle at 78% 72%, rgba(117,83,53,.18) 0 1px, transparent 2px),
+                    linear-gradient(154deg, rgba(36,39,35,.88), rgba(11,17,18,.97) 56%, rgba(2,7,10,.99));
+                background-size: 13px 17px, 19px 15px, auto;
+                box-shadow:
+                    inset 0 1px 0 rgba(220,195,136,.035),
+                    inset 0 0 0 2px rgba(0,0,0,.18),
+                    inset 0 -3px 7px rgba(0,0,0,.42),
+                    0 5px 12px rgba(0,0,0,.28);
+                opacity: .86;
+                transition: opacity .22s ease, border-color .22s ease, box-shadow .22s ease, background .22s ease;
+            }
+            .z-mobile-bottom-nav button::after {
+                content: "";
+                position: absolute;
+                top: 3px;
+                left: 50%;
+                width: 4px;
+                height: 4px;
+                border-radius: 50%;
+                background: var(--z-gold);
+                box-shadow: 0 0 10px rgba(224,194,117,.64);
+                opacity: 0;
+                transform: translateX(-50%) scale(.5);
+                transition: opacity .22s ease, transform .22s var(--z-ease);
+            }
+            .z-mobile-bottom-nav button > svg {
+                position: relative;
+                z-index: 1;
+                width: 23px;
+                height: 23px;
+                stroke-width: 1.55;
+                filter: drop-shadow(0 1px 3px rgba(0,0,0,.5));
+                transition: filter .22s ease, transform .22s var(--z-ease);
+            }
+            .z-mobile-bottom-nav button:hover::before,
+            .z-mobile-bottom-nav button:focus-visible::before { border-color: rgba(77,168,151,.35); opacity: 1; }
             .z-mobile-bottom-nav button:active { transform: scale(.93); }
             .z-mobile-bottom-nav button.z-mobile-nav-active {
-                color: #dfc276;
-                background: rgba(195,161,90,.1);
-                border-color: rgba(195,161,90,.28);
-                box-shadow: inset 0 1px 0 rgba(255,255,255,.04), 0 0 18px rgba(195,161,90,.08);
+                color: #e4c978;
+                border-color: rgba(195,161,90,.2);
+                filter: saturate(1.12);
             }
-            .mobile-nav-safe { padding-bottom: 5rem; }
+            .z-mobile-bottom-nav button.z-mobile-nav-active::before {
+                opacity: 1;
+                border-color: rgba(224,194,117,.58);
+                background:
+                    radial-gradient(circle at 50% 20%, rgba(224,194,117,.15), transparent 58%),
+                    linear-gradient(154deg, rgba(58,49,30,.94), rgba(19,23,20,.98) 58%, rgba(3,8,10,.99));
+                box-shadow:
+                    inset 0 1px 0 rgba(255,239,183,.12),
+                    inset 0 0 0 2px rgba(195,161,90,.08),
+                    0 0 18px rgba(195,161,90,.13),
+                    0 6px 15px rgba(0,0,0,.35);
+            }
+            .z-mobile-bottom-nav button.z-mobile-nav-active::after {
+                opacity: .9;
+                transform: translateX(-50%) scale(1);
+            }
+            .z-mobile-bottom-nav button.z-mobile-nav-active > svg {
+                filter: drop-shadow(0 0 6px rgba(224,194,117,.3));
+            }
+            .mobile-nav-safe { padding-bottom: 5.6rem; }
             .z-system-ui .app-mobile-header { margin: 7px 8px 0; min-height: 60px; border-radius: 18px; }
             /* Keep the original archive UI, but make it behave like a native
                surface: no iOS zoom on form fields and comfortable touch targets
