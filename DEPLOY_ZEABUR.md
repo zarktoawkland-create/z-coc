@@ -49,6 +49,33 @@ APP_ALLOWED_ORIGINS=https://app.example.com,https://preview.example.com
 8. 用测试账号完成注册、保存、退出、另一浏览器登录和恢复数据的回归测试。
 9. 验证后再绑定正式域名并启用数据库自动备份。
 
+## 不覆盖原网站的并行部署
+
+如果项目里已经存在正在运行的 `z-coc` 网站服务和 `mysql` 服务，不要删除或重部署原来的 `z-coc`。在同一个 Zeabur 项目中新增一个服务，例如 `z-coc-api`：
+
+1. 将本仓库最新代码推送到 GitHub 分支，或在 Zeabur 中选择包含后端升级的分支。
+2. 在项目中点击“新建服务”，从同一个仓库创建 `z-coc-api`，让它使用根目录 `Dockerfile`，容器端口保持 `8080`。
+3. 在 `z-coc-api` 的“整合”中连接已有的 `mysql` 服务，确认注入 `MYSQL_HOST`、`MYSQL_PORT`、`MYSQL_USERNAME`、`MYSQL_PASSWORD` 和 `MYSQL_DATABASE`。不要新建第二个 MySQL。
+4. 为 `z-coc-api` 生成临时域名，先访问 `/health.php?probe=live` 和 `/health.php`，确认进程和数据库都正常。
+5. 在 MySQL 服务的“命令”或数据库控制台中执行 `migrations/001_initial.sql`。执行前先做一次数据库备份。
+6. 先让 App 指向新 API，编辑 `assets/js/runtime-config.js`：
+
+```js
+webApiOrigin: '',
+apiOrigin: 'https://你的-z-coc-api-临时域名',
+```
+
+这样原网站仍使用旧服务，App 使用新服务；两者通过同一个 MySQL 共享用户和云端数据。新 API 的会话写入独立的 `user_sessions`，不会覆盖旧网站的登录令牌。
+
+7. 如果测试通过，再将 `webApiOrigin` 也改成新 API 域名，并重新部署网站前端；原来的 `z-coc` 服务仍可保留作为回滚版本。
+8. App 的 API 请求来自 `https://localhost` 或 `capacitor://localhost`，因此 `z-coc-api` 的 `APP_ALLOWED_ORIGINS` 至少设置为：
+
+```text
+https://localhost,capacitor://localhost
+```
+
+如果网站前端也切到新 API，再追加网站的完整 HTTPS Origin。不要填写 `*`。
+
 ## 上线检查
 
 - `/db_api.php?action=pull` 返回 JSON 错误而不是 PHP 源码。
