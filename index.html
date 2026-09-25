@@ -1645,6 +1645,22 @@
                 background: linear-gradient(145deg, rgba(12,21,28,.52), rgba(5,11,16,.48)) !important;
                 box-shadow: none !important;
             }
+            .z-system-ui .settings-art-shell {
+                background-image:
+                    linear-gradient(180deg, rgba(2,5,13,.52), rgba(3,7,12,.64) 42%, rgba(3,7,12,.74) 100%),
+                    url("./assets/art/generated/settings-archive-background-v1.png"),
+                    url("./assets/art/generated/observatory-chart-1890s.webp"),
+                    url("./assets/art/generated/cephalopod-archive-plate.webp") !important;
+                background-size: auto, cover, 62vw auto, 72vw auto !important;
+                background-position: center, center top, 120% 14px, 118% 170px !important;
+                background-repeat: no-repeat !important;
+                background-attachment: fixed !important;
+                background-blend-mode: normal, normal, soft-light, soft-light !important;
+            }
+            .z-system-ui .settings-art-shell > .z-art-settings {
+                background: transparent !important;
+            }
+            .z-system-ui .settings-art-shell > .animate-fade-in-bg { display: none !important; }
             .z-system-ui .settings-mobile-row { min-height: 3.55rem; border-color: rgba(151,158,149,.12) !important; }
             .z-system-ui .settings-mobile-icon { border-radius: 9px; background: rgba(195,161,90,.055) !important; }
             .z-system-ui .settings-mobile-group:nth-child(1 of .settings-mobile-group) .settings-mobile-row:nth-child(1) .settings-mobile-icon,
@@ -2344,7 +2360,7 @@
             </div>
         </div>
 
-        <div :class="['flex-1 flex flex-col h-full overflow-hidden relative bg-black/20', cocState.gameState === 'playing' ? '' : 'mobile-nav-safe']">
+        <div :class="['flex-1 flex flex-col h-full overflow-hidden relative bg-black/20', cocState.gameState === 'playing' ? '' : 'mobile-nav-safe', (currentView === 'settings' || currentView === 'archiveTools') ? 'settings-art-shell' : '']">
             <div class="absolute inset-0 pointer-events-none overflow-hidden flex items-center justify-center animate-fade-in-bg">
                 <svg class="w-[800px] h-[800px] text-mystic-gold/70" viewBox="0 0 24 24" fill="currentColor"><path d="M12,2C6.48,2,2,6.48,2,12c0,5.52,4.48,10,10,10s10-4.48,10-10C22,6.48,17.52,2,12,2z M12,20c-4.41,0-8-3.59-8-8 c0-4.41,3.59-8,8-8s8,3.59,8,8C20,16.41,16.41,20,12,20z M12,6c-3.31,0-6,2.69-6,6c0,1.36,0.46,2.61,1.23,3.62l1.46-1.46 C8.26,13.61,8,12.84,8,12c0-2.21,1.79-4,4-4s4,1.79,4,4c0,0.84-0.26,1.61-0.69,2.16l1.46,1.46C17.54,14.61,18,13.36,18,12 C18,8.69,15.31,6,12,6z M12,10c-1.1,0-2,0.9-2,2c0,0.55,0.22,1.05,0.59,1.41l2.83-2.83C13.05,10.22,12.55,10,12,10z"/></svg>
             </div>
