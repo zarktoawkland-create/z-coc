@@ -9,6 +9,14 @@
 
 根目录 `Dockerfile` 会启动 PHP 8.3 + Apache，并在容器端口 `8080` 提供网页与 PHP API。
 
+本地联调可以直接使用根目录的 `docker-compose.yml`，它会启动同版本 PHP/Apache 和 MySQL 8.4：
+
+```text
+docker compose up --build
+```
+
+默认只用于本机测试的数据库密码写在 Compose 默认值中；生产环境必须通过 Zeabur 环境变量覆盖，不要复用本地密码。
+
 ## 数据库变量
 
 网站服务应能读取 MySQL 服务注入的以下变量：
