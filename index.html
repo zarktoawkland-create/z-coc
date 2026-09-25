@@ -886,6 +886,7 @@
             .z-system-ui select,
             .z-system-ui textarea { font-size: 16px !important; }
             .z-system-ui .app-sidebar {
+                display: none !important;
                 width: min(17.5rem, 76vw) !important;
                 max-width: min(17.5rem, 76vw) !important;
                 margin: 8px;
@@ -2019,9 +2020,6 @@
             </div>
         </div>
 
-        <!-- Mobile Sidebar Overlay -->
-        <div v-if="showMobileMenu" @click="showMobileMenu = false" class="fixed inset-0 bg-black/30 backdrop-blur-sm z-20 md:hidden transition-opacity"></div>
-
         <!-- Sidebar -->
         <div :class="['app-sidebar fixed inset-y-0 left-0 z-30 w-72 bg-dark-900 border-r border-dark-800 transform transition-transform duration-300 md:relative md:translate-x-0 flex flex-col shadow-2xl bg-void-noise', showMobileMenu ? 'translate-x-0' : '-translate-x-full']">
             <div class="z-brand-header h-24 flex items-center px-6 border-b border-dark-800 bg-dark-950/50 backdrop-blur-sm relative overflow-hidden">
@@ -2192,10 +2190,10 @@
             
             <!-- Mobile Header -->
             <div v-if="cocState.gameState !== 'playing' || currentView !== 'chat'" class="app-mobile-header md:hidden min-h-14 py-2 bg-dark-900 border-b border-dark-800 flex items-center justify-between px-4 z-10 flex-shrink-0 safe-pt">
-                <button @click="currentView === 'settings' && mobileSettingsSection !== 'menu' ? backMobileSettings() : (showMobileMenu = !showMobileMenu)" class="p-2 -ml-2 text-slate-400 hover:text-mystic-gold transition-colors" :aria-label="currentView === 'settings' && mobileSettingsSection !== 'menu' ? '返回设置目录' : '打开导航菜单'">
+                <button v-if="currentView === 'settings' && mobileSettingsSection !== 'menu'" @click="backMobileSettings()" class="p-2 -ml-2 text-slate-400 hover:text-mystic-gold transition-colors" aria-label="返回设置目录">
                     <svg v-if="currentView === 'settings' && mobileSettingsSection !== 'menu'" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
-                    <svg v-else class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
                 </button>
+                <div v-else class="w-10" aria-hidden="true"></div>
                 <div v-if="getPageTitle() === 'z-coc'" class="z-brand-lockup z-mobile-brand-lockup" aria-label="z-coc / Call of Cthulhu">
                     <div class="z-brand-emblem-shell">
                         <img class="z-brand-emblem" src="assets/art/generated/brand-occult-brass-seal-v1.webp" alt="z-coc 旧日徽章" decoding="async">
@@ -2224,7 +2222,6 @@
                         <div class="min-h-16 py-2 bg-dark-950/80 backdrop-blur-md border-b border-dark-800 flex items-center justify-between px-4 md:px-6 z-10 shadow-2xl flex-shrink-0 relative safe-pt">
                             <div class="absolute inset-0 bg-gradient-to-r from-mystic-gold/5 via-transparent to-transparent pointer-events-none"></div>
                             <div class="flex items-center gap-4 overflow-hidden relative z-10">
-                                <button @click="showMobileMenu = !showMobileMenu" aria-label="切换导航菜单" :aria-expanded="showMobileMenu" class="md:hidden text-slate-400 flex-shrink-0 hover:text-mystic-gold transition-colors"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg></button>
                                 <div class="flex flex-col">
                                     <div class="text-[10px] text-mystic-gold/60 uppercase tracking-[0.2em] font-bold">当前模组</div>
                                     <div class="font-bold text-mystic-gold truncate max-w-[200px] md:max-w-[400px] font-serif tracking-wide text-lg text-shadow-gold">{{ cocState.module?.name || '未命名模组' }}</div>
