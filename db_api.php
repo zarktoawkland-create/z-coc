@@ -266,11 +266,11 @@ if ($action === 'register') {
 
     $hashedPass = password_hash($password, PASSWORD_DEFAULT);
     $userId = bin2hex(random_bytes(16));
-    $authToken = bin2hex(random_bytes(32));
-    $authTokenHash = hash_auth_token($authToken);
 
-    $stmt = $conn->prepare("INSERT INTO users (email, password, user_uuid, auth_token) VALUES (?, ?, ?, ?)");
-    $stmt->bind_param('ssss', $email, $hashedPass, $userId, $authTokenHash);
+    // Keep the legacy token column untouched when the sidecar session table
+    // is available, so the original website backend can keep its own sessions.
+    $stmt = $conn->prepare("INSERT INTO users (email, password, user_uuid) VALUES (?, ?, ?)");
+    $stmt->bind_param('sss', $email, $hashedPass, $userId);
     if (!$stmt->execute()) {
         if ((int)$stmt->errno === 1062) {
             app_json_response(['status' => 'error', 'message' => '邮箱已被注册'], 409);
@@ -280,8 +280,8 @@ if ($action === 'register') {
 
     // Create the multi-device session only after the user row exists.
     $session = issue_auth_session($conn, $userId, $data['device_id'] ?? 'web', $sessionTtlDays, $maxSessionsPerUser);
-    if (!empty($session['token'])) {
-        $authToken = $session['token'];
+    $authToken = $session['token'];
+    if (empty($session['stored'])) {
         $authTokenHash = hash_auth_token($authToken);
         $stmt = $conn->prepare("UPDATE users SET auth_token = ? WHERE user_uuid = ?");
         $stmt->bind_param('ss', $authTokenHash, $userId);
@@ -314,11 +314,13 @@ if ($action === 'login') {
 
     $session = issue_auth_session($conn, $user['user_uuid'], $data['device_id'] ?? 'web', $sessionTtlDays, $maxSessionsPerUser);
     $authToken = $session['token'];
-    $authTokenHash = hash_auth_token($authToken);
-    $stmt = $conn->prepare("UPDATE users SET auth_token = ? WHERE user_uuid = ?");
-    $stmt->bind_param('ss', $authTokenHash, $user['user_uuid']);
-    if (!$stmt->execute()) {
-        app_json_response(['status' => 'error', 'message' => '登录暂时不可用'], 500);
+    if (empty($session['stored'])) {
+        $authTokenHash = hash_auth_token($authToken);
+        $stmt = $conn->prepare("UPDATE users SET auth_token = ? WHERE user_uuid = ?");
+        $stmt->bind_param('ss', $authTokenHash, $user['user_uuid']);
+        if (!$stmt->execute()) {
+            app_json_response(['status' => 'error', 'message' => '登录暂时不可用'], 500);
+        }
     }
 
     app_json_response(['status' => 'success', 'user_id' => $user['user_uuid'], 'auth_token' => $authToken]);
