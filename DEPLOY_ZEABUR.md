@@ -37,14 +37,15 @@ APP_ALLOWED_ORIGINS=https://app.example.com,https://preview.example.com
 4. 确认构建日志显示使用根目录 Dockerfile，网站端口为 8080。
 5. 为网站服务生成临时 `*.zeabur.app` 域名；不要为 MySQL 绑定公网域名。
 6. 访问 `/health.php`，应返回 `{"status":"ok"}`。
-7. 用测试账号完成注册、保存、退出、另一浏览器登录和恢复数据的回归测试。
-8. 验证后再绑定正式域名并启用数据库自动备份。
+7. 生产数据库先执行 `migrations/001_initial.sql`，让表结构和版本记录可审计；旧安装仍可由接口兼容升级。
+8. 用测试账号完成注册、保存、退出、另一浏览器登录和恢复数据的回归测试。
+9. 验证后再绑定正式域名并启用数据库自动备份。
 
 ## 上线检查
 
 - `/db_api.php?action=pull` 返回 JSON 错误而不是 PHP 源码。
 - `config.local.php` 不在 GitHub 仓库、构建上下文或容器文件中。
-- MySQL 中已创建 `users`、`user_data`、`coc_rooms`、`coc_room_messages`、`coc_library_modules` 和 `api_rate_limits`。
+- MySQL 中已创建 `schema_migrations`、`users`、`user_sessions`、`user_data`、`coc_rooms`、`coc_room_messages`、`coc_library_modules` 和 `api_rate_limits`。
 - HTTPS 有效，主站、Library、Workshop 和 Service Worker 均能加载。
 - 设备 A 创建的调查员和存档能在设备 B 登录后恢复。
 - 已配置数据库定期备份，并至少完成一次恢复演练。

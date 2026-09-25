@@ -27,4 +27,9 @@ return [
     'cloud' => [
         'max_sync_bytes' => 16 * 1024 * 1024,
     ],
+    'auth' => [
+        // Bearer sessions are rotated at login and expire automatically.
+        'session_ttl_days' => 30,
+        'max_sessions_per_user' => 8,
+    ],
 ];

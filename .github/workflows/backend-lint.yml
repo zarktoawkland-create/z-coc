@@ -1,0 +1,30 @@
+name: Backend lint
+
+on:
+  push:
+    paths:
+      - '**.php'
+      - 'migrations/**'
+      - '.github/workflows/backend-lint.yml'
+  pull_request:
+    paths:
+      - '**.php'
+      - 'migrations/**'
+      - '.github/workflows/backend-lint.yml'
+
+jobs:
+  php-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: none
+      - name: Lint PHP endpoints
+        shell: bash
+        run: |
+          set -euo pipefail
+          while IFS= read -r -d '' file; do
+            php -l "$file"
+          done < <(find . -type f -name '*.php' -not -path './node_modules/*' -print0)

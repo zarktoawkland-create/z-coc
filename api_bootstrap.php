@@ -49,6 +49,23 @@ function app_config() {
     return is_array($config) ? $config : [];
 }
 
+function app_request_id() {
+    static $requestId = null;
+    if ($requestId !== null) return $requestId;
+
+    $candidate = trim((string)($_SERVER['HTTP_X_REQUEST_ID'] ?? ''));
+    if ($candidate !== '' && preg_match('/^[a-zA-Z0-9._:-]{8,96}$/', $candidate)) {
+        $requestId = $candidate;
+    } else {
+        try {
+            $requestId = bin2hex(random_bytes(16));
+        } catch (Throwable $error) {
+            $requestId = uniqid('z_', true);
+        }
+    }
+    return $requestId;
+}
+
 function app_send_cors_headers($methods = 'GET, POST, OPTIONS') {
     $config = app_config();
     $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
@@ -63,9 +80,12 @@ function app_send_cors_headers($methods = 'GET, POST, OPTIONS') {
 
     header('Access-Control-Allow-Methods: ' . $methods);
     header('Access-Control-Allow-Headers: Content-Type, Authorization');
+    header('Access-Control-Expose-Headers: ETag, X-Request-ID, Retry-After');
     header('Access-Control-Max-Age: 600');
     header('X-Content-Type-Options: nosniff');
     header('Referrer-Policy: strict-origin-when-cross-origin');
+    header('X-Request-ID: ' . app_request_id());
+    header('Cache-Control: no-store');
 
     if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
         http_response_code(204);
@@ -76,6 +96,8 @@ function app_send_cors_headers($methods = 'GET, POST, OPTIONS') {
 function app_json_response($data, $status = 200) {
     http_response_code($status);
     header('Content-Type: application/json; charset=UTF-8');
+    header('X-Request-ID: ' . app_request_id());
+    header('Cache-Control: no-store');
     echo json_encode($data, JSON_UNESCAPED_UNICODE);
     exit;
 }
