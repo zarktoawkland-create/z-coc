@@ -2474,7 +2474,7 @@
                         
                         // Switch to new character
                         activeIndex.value = characters.value.length - 1;
-                        await localforage.setItem('ai_chargen_active_index_coc', activeIndex.value);
+                        localStorage.setItem('ai_chargen_active_index_coc', activeIndex.value);
                         
                         // Sync and Save
                         syncCurrentCharacter();
