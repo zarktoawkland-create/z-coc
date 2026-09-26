@@ -1208,16 +1208,7 @@
             background-position: center, center 58%;
             background-repeat: no-repeat;
         }
-        .z-art-manual {
-            --z-art-image: url("./assets/art/generated/cephalopod-archive-plate.webp");
-            --z-art-position: right -10% top 7%;
-            --z-art-mobile-position: 72% 16%;
-        }
-        .z-art-manual::before {
-            background-size: auto, auto, min(42vw, 540px) auto !important;
-            opacity: .34 !important;
-            filter: grayscale(.35) sepia(.12) saturate(.48) contrast(1.06) brightness(.58) !important;
-        }
+
         .z-art-settings {
             background-image:
                 linear-gradient(90deg, rgba(3,7,12,.62) 0%, rgba(2,5,13,.68) 52%, rgba(2,5,13,.54) 100%),
@@ -1375,7 +1366,6 @@
                 -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 54%, transparent 100%);
                 mask-image: linear-gradient(to bottom, #000 0%, #000 54%, transparent 100%);
             }
-            .z-art-manual::before { background-size: auto, auto, 78vw auto !important; }
             .z-tavern-hero { height: 142px; margin: 0 auto 16px; border-radius: 17px; background-position: center, center, 54% 34%; }
             .z-tavern-hero::after { right: 12px; bottom: 10px; font-size: 7px; letter-spacing: .13em; }
             .z-art-settings {
@@ -2244,11 +2234,7 @@
                     <svg class="w-5 h-5 mr-3 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path></svg>
                     <span class="relative z-10">扎克托广播</span>
                 </button>
-                <button @click="currentView = 'manual'; showMobileMenu = false" :class="['z-sidebar-tab w-full flex items-center px-4 py-3.5 rounded-lg transition-all duration-300 font-bold tracking-wide border group relative overflow-hidden', currentView === 'manual' ? 'z-active bg-mystic-green/10 border-mystic-green/40 text-mystic-green' : 'border-transparent text-slate-400 hover:text-slate-200 hover:bg-dark-800 hover:border-dark-700']">
-                    <div class="absolute inset-0 bg-gradient-to-r from-mystic-green/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                    <svg class="w-5 h-5 mr-3 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.989-2.386l-.548-.547z"></path></svg>
-                    <span class="relative z-10">调查员手册</span>
-                </button>
+
                 <button @click="openCocCard" 
                         :class="['w-full flex items-center px-4 py-3.5 rounded-lg transition-all duration-300 font-bold tracking-wide border group relative overflow-hidden border-transparent', cocState.gameState === 'playing' ? 'opacity-50 cursor-not-allowed' : 'text-slate-400 hover:text-slate-200 hover:bg-dark-800 hover:border-dark-700']"
                         :title="cocState.gameState === 'playing' ? '游戏进行中，暂不可进入档案' : ''">
@@ -2369,7 +2355,10 @@
             <!-- Mobile Header -->
             <div v-if="cocState.gameState !== 'playing' || currentView !== 'chat'" class="app-mobile-header md:hidden min-h-14 py-2 bg-dark-900 border-b border-dark-800 flex items-center justify-between px-4 z-10 flex-shrink-0 safe-pt">
                 <button v-if="currentView === 'settings' && mobileSettingsSection !== 'menu'" @click="backMobileSettings()" class="p-2 -ml-2 text-slate-400 hover:text-mystic-gold transition-colors" aria-label="返回设置目录">
-                    <svg v-if="currentView === 'settings' && mobileSettingsSection !== 'menu'" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                </button>
+                <button v-else-if="['tavern', 'friends', 'broadcast'].includes(currentView)" @click="backFromArchiveChild()" class="p-2 -ml-2 text-slate-400 hover:text-mystic-gold transition-colors" aria-label="返回广播与资料目录">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
                 </button>
                 <div v-else class="w-10" aria-hidden="true"></div>
                 <div v-if="getPageTitle() === 'z-coc'" class="z-brand-lockup z-mobile-brand-lockup" aria-label="z-coc / Call of Cthulhu">
@@ -3090,7 +3079,13 @@
 
             <!-- 5. Friends View -->
             <div v-if="currentView === 'friends'" class="z-art-view z-art-friends h-full overflow-y-auto p-4 md:p-8 animate-fade-in bg-dark-950">
-                <h2 class="text-2xl font-bold mb-8 text-mystic-gold font-serif">同伴名录</h2>
+                <div class="flex items-center gap-3 mb-8">
+                    <button type="button" @click="backFromArchiveChild()" class="hidden md:flex items-center gap-2 px-2 py-1.5 -ml-2 text-slate-400 hover:text-mystic-gold transition-colors text-sm font-bold" aria-label="返回广播与资料目录">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                        <span>返回资料目录</span>
+                    </button>
+                    <h2 class="text-2xl font-bold text-mystic-gold font-serif">同伴名录</h2>
+                </div>
                 <div class="max-w-2xl mx-auto space-y-6">
                     <div class="glass-panel p-4 md:p-6 rounded-lg shadow-sm flex flex-col md:flex-row gap-4 md:justify-between items-start md:items-center">
                         <div class="w-full flex-1 min-w-0">
@@ -3109,16 +3104,16 @@
                 </div>
             </div>
 
-            <!-- 6. Broadcast / manual directory view -->
+            <!-- 6. Broadcast / archive directory view -->
             <div v-if="currentView === 'archiveTools'" class="z-art-view z-art-settings settings-view h-full overflow-y-auto px-0 py-2 md:p-8 animate-fade-in">
                 <div class="settings-page-title max-w-7xl mx-auto mb-6 hidden md:flex items-end justify-between px-1">
                     <div>
                         <div class="text-[10px] uppercase tracking-[0.3em] text-emerald-400/70 font-mono mb-2">Archive Reference Index</div>
-                        <h2 class="text-3xl font-bold text-slate-100 font-serif">广播与手册</h2>
+                        <h2 class="text-3xl font-bold text-slate-100 font-serif">广播与资料</h2>
                     </div>
                     <span class="text-[10px] text-slate-600 font-mono">ZARKTO / REFERENCE NODE</span>
                 </div>
-                <div class="settings-mobile-menu md:hidden" aria-label="广播与手册目录">
+                <div class="settings-mobile-menu md:hidden" aria-label="广播与资料目录">
                     <div class="settings-mobile-group">
                         <button type="button" class="settings-mobile-row" @click="currentView = 'tavern'; showMobileMenu = false">
                             <span class="settings-mobile-icon" style="color:#d4af37;border-color:#d4af3738;background-color:#d4af3712">
@@ -3141,13 +3136,7 @@
                             <span class="settings-mobile-label">扎克托广播</span>
                             <svg class="settings-mobile-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                         </button>
-                        <button type="button" class="settings-mobile-row" @click="currentView = 'manual'; showMobileMenu = false">
-                            <span class="settings-mobile-icon" style="color:#b5a37d;border-color:#b5a37d38;background-color:#b5a37d12">
-                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-width="1.8" stroke-linecap="round" d="M9.66 17h4.68M12 3v1m6.36 1.64-.7.7M21 12h-1M4 12H3m3.34-5.66-.7-.7m2.83 9.9a5 5 0 1 0 7.07 0l-.55-.55A3.37 3.37 0 0 1 14 18.47V19a2 2 0 0 1-4 0v-.53a3.37 3.37 0 0 0-.99-2.39l-.55-.55Z"/></svg>
-                            </span>
-                            <span class="settings-mobile-label">调查员手册</span>
-                            <svg class="settings-mobile-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-                        </button>
+
                     </div>
                 </div>
             </div>
@@ -3735,11 +3724,17 @@
 
             <!-- 7. Tavern View (New) -->
             <div v-if="currentView === 'tavern'" class="z-art-view z-art-tavern h-full overflow-y-auto p-4 md:p-8 animate-fade-in bg-dark-950">
-                <div class="flex justify-between items-center mb-8">
-                    <h2 class="text-2xl font-bold text-amber-500 font-serif flex items-center gap-3">
+                <div class="flex flex-wrap justify-between items-center gap-3 mb-8">
+                    <div class="flex items-center gap-3">
+                        <button type="button" @click="backFromArchiveChild()" class="hidden md:flex items-center gap-2 px-2 py-1.5 -ml-2 text-slate-400 hover:text-amber-400 transition-colors text-sm font-bold" aria-label="返回广播与资料目录">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            <span>返回资料目录</span>
+                        </button>
+                        <h2 class="text-2xl font-bold text-amber-500 font-serif flex items-center gap-3">
                         <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
                         异闻酒馆
                     </h2>
+                    </div>
                     <div class="flex gap-2">
                         <button @click="tavernState.view = 'create'" :class="['px-4 py-2 rounded border font-bold text-xs uppercase tracking-wider transition-all', tavernState.view === 'create' ? 'bg-amber-900/40 text-amber-400 border-amber-500/50' : 'bg-dark-800 text-slate-500 border-dark-600 hover:text-slate-300']">聆听故事</button>
                         <button @click="tavernState.view = 'list'" :class="['px-4 py-2 rounded border font-bold text-xs uppercase tracking-wider transition-all', tavernState.view === 'list' ? 'bg-amber-900/40 text-amber-400 border-amber-500/50' : 'bg-dark-800 text-slate-500 border-dark-600 hover:text-slate-300']">藏书阁</button>
@@ -3862,11 +3857,17 @@
             <!-- 7.5 Zarkto Broadcast View -->
             <div v-if="currentView === 'broadcast'" class="z-art-view z-art-broadcast h-full overflow-y-auto p-4 md:p-8 animate-fade-in bg-dark-950">
                 <div class="max-w-4xl mx-auto space-y-8">
-                     <header class="flex justify-between items-center mb-8 border-b border-dark-800 pb-4">
-                        <h2 class="text-2xl font-bold text-mystic-gold font-serif flex items-center gap-3">
+                     <header class="flex flex-wrap justify-between items-center gap-3 mb-8 border-b border-dark-800 pb-4">
+                        <div class="flex items-center gap-3">
+                            <button type="button" @click="backFromArchiveChild()" class="hidden md:flex items-center gap-2 px-2 py-1.5 -ml-2 text-slate-400 hover:text-mystic-gold transition-colors text-sm font-bold" aria-label="返回广播与资料目录">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                <span>返回资料目录</span>
+                            </button>
+                            <h2 class="text-2xl font-bold text-mystic-gold font-serif flex items-center gap-3">
                             <svg class="w-8 h-8 animate-pulse-slow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path></svg>
                             扎克托广播
-                        </h2>
+                            </h2>
+                        </div>
                         <div class="text-[10px] text-slate-500 font-mono flex flex-col items-end">
                             <span class="uppercase tracking-widest text-mystic-gold/60">Frequency: 192.8 MHz</span>
                             <span>Ver 1.3.0</span>
@@ -4105,327 +4106,7 @@
                 </div>
             </div>
 
-            <!-- 8. Manual View (Extreme Detail Tutorial) -->
-            <div v-if="currentView === 'manual'" class="z-art-view z-art-manual h-full overflow-y-auto p-0 animate-fade-in bg-dark-950">
-                <!-- Manual Sticky Header -->
-                <div class="sticky top-0 z-30 bg-dark-900/80 backdrop-blur-md border-b border-dark-800 p-4 flex items-center justify-between safe-pt px-6">
-                    <button @click="currentView = 'chat'" class="flex items-center gap-2 text-slate-400 hover:text-mystic-gold transition-colors text-sm font-bold uppercase tracking-widest group">
-                        <svg class="w-5 h-5 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-                        返回大厅
-                    </button>
-                    <div class="text-[10px] text-mystic-gold font-bold uppercase tracking-[0.2em] opacity-60">Handy Guide</div>
-                </div>
-                
-                <div class="max-w-4xl mx-auto space-y-16 pb-32 p-4 md:p-8">
-                    <!-- Header -->
-                    <header class="text-center space-y-6 pt-8">
-                        <div class="inline-block px-4 py-1.5 bg-mystic-gold/10 border border-mystic-gold/30 rounded-full text-mystic-gold text-[10px] uppercase tracking-[0.3em] font-bold">Investigator's Manual</div>
-                        <h2 class="text-4xl md:text-5xl font-bold text-slate-200 font-serif tracking-tight">调查员手册 <span class="text-mystic-gold">Ver 1.3.0</span></h2>
-                        <p class="text-slate-500 font-serif italic max-w-lg mx-auto leading-relaxed">"当你凝视深渊时，深渊也在凝视你。而这本手册，将是你坠入黑暗前的最后一根火柴。"</p>
-                        <div class="flex justify-center gap-4">
-                            <div class="h-px w-12 bg-gradient-to-r from-transparent to-mystic-gold/40 mt-3"></div>
-                            <svg class="w-6 h-6 text-mystic-gold/40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
-                            <div class="h-px w-12 bg-gradient-to-l from-transparent to-mystic-gold/40 mt-3"></div>
-                        </div>
-                    </header>
 
-                    <!-- Section: Cloud Sync -->
-                    <section class="relative group">
-                        <div class="absolute -left-4 top-0 bottom-0 w-1 bg-gradient-to-b from-mystic-gold/60 to-transparent rounded-full shadow-[0_0_10px_rgba(212,175,55,0.3)]"></div>
-                        <div class="glass-panel p-8 md:p-12 rounded-3xl border border-mystic-gold/10 transition-all hover:border-mystic-gold/20">
-                            <h3 class="text-2xl font-bold text-mystic-gold font-serif mb-8 flex items-center gap-4">
-                                <span class="bg-mystic-gold/10 p-3 rounded-2xl text-mystic-gold"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg></span>
-                                第一章：云端接入
-                            </h3>
-                            <div class="space-y-6 text-slate-400 text-sm font-serif leading-relaxed">
-                                <div class="bg-red-950/20 border-l-4 border-red-500/50 p-6 rounded-r-xl space-y-3">
-                                    <p class="text-red-200 font-bold text-lg italic">⚠️ 核心警告：不要让您的理智（数据）烟消云散</p>
-                                    <p>如果您未在「设置中心」注册并登录账号，调查员、跑团存档与创作记录将只保存在当前浏览器。<strong>清理站点数据、更换设备或使用隐身模式，都可能使这些本地档案无法找回。</strong></p>
-                                </div>
-                                <div class="space-y-4">
-                                    <p><strong class="text-slate-200">手把手操作指引：</strong></p>
-                                    <ul class="space-y-4">
-                                        <li class="flex gap-4">
-                                            <span class="w-6 h-6 rounded-full bg-dark-800 border border-dark-700 flex items-center justify-center text-mystic-gold shrink-0 font-bold">1</span>
-                                            <p>点击左侧边栏最下方的 <span class="text-slate-200 underline cursor-pointer" @click="currentView = 'settings'">个人信息区域</span> 或直接进入设置。</p>
-                                        </li>
-                                        <li class="flex gap-4">
-                                            <span class="w-6 h-6 rounded-full bg-dark-800 border border-dark-700 flex items-center justify-center text-mystic-gold shrink-0 font-bold">2</span>
-                                            <p>找到标有 <span class="text-mystic-green">“云端节点连接状态”</span> 的面板，点击橙黄色的「接入云端」按钮。</p>
-                                        </li>
-                                        <li class="flex gap-4">
-                                            <span class="w-6 h-6 rounded-full bg-dark-800 border border-dark-700 flex items-center justify-center text-mystic-gold shrink-0 font-bold">3</span>
-                                            <p>完成注册并登录后，系统会自动拉取云端档案，并在数据变化后同步调查员、跑团存档、异闻创作与必要设置。API Key 仍只保存在当前浏览器。</p>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-
-                    <!-- Section: Self Hosted Services -->
-                    <section class="relative group">
-                        <div class="absolute -left-4 top-0 bottom-0 w-1 bg-gradient-to-b from-cyan-500/60 to-transparent rounded-full"></div>
-                        <div class="glass-panel p-8 md:p-12 rounded-3xl border border-cyan-900/10 transition-all hover:border-cyan-900/20">
-                            <h3 class="text-2xl font-bold text-cyan-400 font-serif mb-8 flex items-center gap-4">
-                                <span class="bg-cyan-900/10 p-3 rounded-2xl text-cyan-400"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 7h16M4 12h16M4 17h16"></path></svg></span>
-                                第二章：设置中心与私有服务
-                            </h3>
-                            <div class="space-y-8 text-slate-400 text-sm font-serif leading-relaxed">
-                                <div class="space-y-4">
-                                    <h4 class="text-slate-200 font-bold flex items-center gap-2"><span class="w-2 h-2 bg-cyan-400 rounded-full"></span> 1. 云端与联机使用自建服务</h4>
-                                    <p>1.3.0 延续自建 PHP/MySQL 架构，不依赖 Supabase 实时连接。只要服务器支持 PHP 与 MySQL，就可以使用项目内置的 <span class="text-cyan-300 font-mono">room_api.php</span>、<span class="text-cyan-300 font-mono">db_api.php</span> 和 <span class="text-cyan-300 font-mono">library_api.php</span>。多人房间采用普通 HTTP 轮询同步，适合没有常驻进程权限的部署环境。</p>
-                                    <div class="bg-dark-900 border border-dark-700 p-5 rounded-xl text-xs text-slate-500 space-y-2">
-                                        <p><strong class="text-slate-300">部署要点：</strong> 将源码上传到虚拟主机，复制 <span class="font-mono text-slate-300">config.example.php</span> 为 <span class="font-mono text-slate-300">config.local.php</span>，填入数据库账号、库名和允许访问的域名。</p>
-                                        <p><strong class="text-slate-300">安全提醒：</strong> <span class="font-mono text-slate-300">config.local.php</span> 只放服务器，不要提交到公开仓库。</p>
-                                    </div>
-                                </div>
-                                <div class="space-y-4">
-                                    <h4 class="text-slate-200 font-bold flex items-center gap-2"><span class="w-2 h-2 bg-cyan-400 rounded-full"></span> 2. 接入 Nai2API 头像生成</h4>
-                                    <p>进入「设置中心」的「头像生图配置」，填写您自己的 Nai2API 服务地址与用户密钥。地址可以只填域名，例如 <span class="text-cyan-300 font-mono">https://your-domain.com</span>，系统会自动拼接为 <span class="text-cyan-300 font-mono">/generate</span> 直链。</p>
-                                    <ul class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <li class="bg-dark-900/50 p-4 rounded-xl border border-dark-800">
-                                            <p class="text-cyan-300 font-bold text-xs mb-1">自定义 URL / Key</p>
-                                            <p class="text-xs text-slate-500">支持 STA1N 用户密钥，也支持带模板的兼容接口，例如 <span class="font-mono">{prompt}</span>、<span class="font-mono">{token}</span>、<span class="font-mono">{model}</span>。</p>
-                                        </li>
-                                        <li class="bg-dark-900/50 p-4 rounded-xl border border-dark-800">
-                                            <p class="text-cyan-300 font-bold text-xs mb-1">画师串预设</p>
-                                            <p class="text-xs text-slate-500">内置 2.5D唯美风、韩漫小清新风、本子动漫风、GalGame风、动漫风（旧），也可以选择「自定义」后手写自己的质量前缀。</p>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div class="space-y-4">
-                                    <h4 class="text-slate-200 font-bold flex items-center gap-2"><span class="w-2 h-2 bg-cyan-400 rounded-full"></span> 3. 配置私有模型链路</h4>
-                                    <p>在「API 连接与服务」中选择提供商预设，或填写自己的 OpenAI 兼容地址。主叙事、辅助任务与快速响应模型可以分别配置；刷新模型列表后可直接选择服务端返回的模型。</p>
-                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <div class="bg-dark-900/50 p-4 rounded-xl border border-dark-800">
-                                            <p class="text-cyan-300 font-bold text-xs mb-1">桌面端</p>
-                                            <p class="text-xs text-slate-500">设置采用宽屏双列网格；高级选项、环境留声机、空间管理与功能开关会成对排列，减少无效留白。</p>
-                                        </div>
-                                        <div class="bg-dark-900/50 p-4 rounded-xl border border-dark-800">
-                                            <p class="text-cyan-300 font-bold text-xs mb-1">移动端</p>
-                                            <p class="text-xs text-slate-500">设置首页只显示模块目录。点击模块进入详情，使用顶部返回按钮回到目录，无需在一张超长页面中反复滚动。</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-
-                    <!-- Section: Commands & Sidebar -->
-                    <section class="relative group">
-                        <div class="absolute -left-4 top-0 bottom-0 w-1 bg-gradient-to-b from-mystic-green/60 to-transparent rounded-full"></div>
-                        <div class="glass-panel p-8 md:p-12 rounded-3xl border border-mystic-green/10">
-                            <h3 class="text-2xl font-bold text-mystic-green font-serif mb-8 flex items-center gap-4">
-                                <span class="bg-mystic-green/10 p-3 rounded-2xl text-mystic-green"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path></svg></span>
-                                第三章：指令与侧边栏
-                            </h3>
-                            <div class="space-y-8">
-                                <div class="space-y-4">
-                                    <h4 class="text-slate-200 font-bold flex items-center gap-2"><span class="w-2 h-2 bg-mystic-green rounded-full"></span> 1. 快捷调查员面板</h4>
-                                    <p class="text-sm text-slate-400 font-serif leading-relaxed">在跑团过程中，点击屏幕右上角的 <span class="text-mystic-green font-bold">「👤小人图标」</span>。您可以查看实时更新的属性表。<strong>重点：不需要打字！</strong> 只需直接点击面板上的数值（如“侦查 70”），系统会自动在下方的对话框中填入标准指令。您只需按下回车即可发起检定。</p>
-                                </div>
-                                <div class="space-y-4">
-                                    <h4 class="text-slate-200 font-bold flex items-center gap-2"><span class="w-2 h-2 bg-mystic-green rounded-full"></span> 2. 正确的检定语法</h4>
-                                    <p class="text-sm text-slate-400 font-serif leading-relaxed">若手动输入，格式如下。若格式不规范，守秘人（KP）将无法识别您的动作：</p>
-                                    <div class="bg-dark-900 border border-dark-700 p-5 rounded-xl font-mono text-sm shadow-inner group">
-                                        <div class="text-mystic-gold">.ra [检定项] [空格] [动作描述/RP]</div>
-                                        <div class="mt-3 text-slate-500 italic text-xs">示例：<span class="text-slate-200">.ra 侦查 我屏住呼吸，扫视黑暗的走廊尽头</span></div>
-                                    </div>
-                                    <p class="text-xs text-slate-500 font-serif">虽然动作描述可以省略，但我们强烈建议您写上一句，这能让 AI 守秘人给出更具代入感的反馈。</p>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-
-                    <!-- Section: Memory Corridor -->
-                    <section class="relative group">
-                        <div class="absolute -left-4 top-0 bottom-0 w-1 bg-gradient-to-b from-indigo-500/60 to-transparent rounded-full"></div>
-                        <div class="glass-panel p-8 md:p-12 rounded-3xl border border-indigo-900/10 transition-all hover:border-indigo-900/20">
-                            <h3 class="text-2xl font-bold text-indigo-400 font-serif mb-8 flex items-center gap-4">
-                                <span class="bg-indigo-900/10 p-3 rounded-2xl text-indigo-400"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path></svg></span>
-                                第四章：记忆回廊
-                            </h3>
-                            <div class="space-y-8">
-                                <div class="space-y-4">
-                                    <h4 class="text-slate-200 font-bold flex items-center gap-2"><span class="w-2 h-2 bg-indigo-400 rounded-full"></span> 1. 整理与文件夹</h4>
-                                    <p class="text-sm text-slate-400 font-serif leading-relaxed">当存档堆积如山时，点击界面右上角的 <span class="text-indigo-400">「⚙️ 编辑/整理」</span> 模式。在此模式下，您可以点击「新建文件夹」标志。您可以给文件夹命名（例如“阿卡姆编年史”），然后点击每一条存档右侧的“移动图标”，将其归类到对应位置。</p>
-                                </div>
-                                <div class="space-y-4">
-                                    <h4 class="text-slate-200 font-bold flex items-center gap-2"><span class="w-2 h-2 bg-indigo-400 rounded-full"></span> 2. 存档的生命周期</h4>
-                                    <ul class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <li class="bg-dark-900/50 p-4 rounded-xl border border-dark-800">
-                                            <p class="text-indigo-300 font-bold text-xs mb-1">导出存档</p>
-                                            <p class="text-xs text-slate-500">点击存档卡片上的下载图标，可将其导出为 JSON 文件。这在进行大规模版本迁移或手动备份时非常有用。</p>
-                                        </li>
-                                        <li class="bg-dark-900/50 p-4 rounded-xl border border-dark-800">
-                                            <p class="text-red-400 font-bold text-xs mb-1">删除文件夹</p>
-                                            <p class="text-xs text-slate-500">删除文件夹时，系统会询问您是“仅解散文件夹（存档放回根目录）”还是“连同内部存档一并抹除”。请谨慎操作。</p>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-
-                    <!-- Section: Tavern -->
-                    <section class="relative group">
-                        <div class="absolute -left-4 top-0 bottom-0 w-1 bg-gradient-to-b from-amber-500/60 to-transparent rounded-full"></div>
-                        <div class="glass-panel p-8 md:p-12 rounded-3xl border border-amber-900/10">
-                            <h3 class="text-2xl font-bold text-amber-500 font-serif mb-8 flex items-center gap-4">
-                                <span class="bg-amber-900/10 p-3 rounded-2xl text-amber-500"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.5 6a7.5 7.5 0 107.5 7.5h-7.5V6z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13.5 10.5H21A7.5 7.5 0 0013.5 3v7.5z"></path></svg></span>
-                                第五章：异闻酒馆
-                            </h3>
-                            <div class="space-y-8">
-                                <p class="text-sm text-slate-400 font-serif leading-relaxed">在这里，枯燥的判定记录将被重塑。以下是创作一篇长篇报告的步骤：</p>
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
-                                    <div class="space-y-6">
-                                        <div class="flex gap-4">
-                                            <span class="text-amber-500 font-mono font-bold text-lg">I.</span>
-                                            <div>
-                                                <p class="text-slate-200 font-bold mb-1">导入底本</p>
-                                                <p class="text-xs text-slate-500">点击上传框，选择您从“记忆回廊”导出的 JSON 存档文件。系统会自动读取其中的所有对话脉络。</p>
-                                            </div>
-                                        </div>
-                                        <div class="flex gap-4">
-                                            <span class="text-amber-500 font-mono font-bold text-lg">II.</span>
-                                            <div>
-                                                <p class="text-slate-200 font-bold mb-1">风格秘方</p>
-                                                <p class="text-xs text-slate-500">您可以指定“洛夫克拉夫特式”、“现代惊悚”或“调查员第一人称日记”等风格。选择不同的视角将产生截然不同的文学效果。</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="p-6 bg-amber-500/5 border border-amber-500/20 rounded-2xl space-y-4">
-                                        <p class="text-xs text-slate-400 italic">“老板，把这段经历写进书里吧。”</p>
-                                        <p class="text-xs text-slate-500 leading-relaxed font-serif">点击「开始创作」后，AI 将进入沉浸式撰写模式。完成后，您可以将其“收藏”到本页面的“藏书阁”中，或直接下载为 Word (DOCX) 或 Markdown 格式分享给其他同伴。</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-
-                    <!-- Section: Ambient Phonograph -->
-                    <section class="relative group">
-                        <div class="absolute -left-4 top-0 bottom-0 w-1 bg-gradient-to-b from-amber-400/60 to-transparent rounded-full"></div>
-                        <div class="glass-panel p-8 md:p-12 rounded-3xl border border-amber-900/10">
-                            <h3 class="text-2xl font-bold text-amber-300 font-serif mb-8 flex items-center gap-4">
-                                <span class="bg-amber-900/10 p-3 rounded-2xl text-amber-300"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 18V5l12-2v13M9 9l12-2M6 21a3 3 0 100-6 3 3 0 000 6zm12-2a3 3 0 100-6 3 3 0 000 6z"></path></svg></span>
-                                第六章：环境留声机
-                            </h3>
-                            <div class="space-y-6 text-sm text-slate-400 font-serif">
-                                <p>设置中心的「环境留声机」负责整个站点的背景声场。系统默认歌单包含 2.5 分钟版「雨夜（街巷）」，首次进入时会尝试以单曲循环播放。</p>
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div class="bg-dark-900/70 p-5 rounded-xl border border-dark-800">
-                                        <p class="text-amber-300 font-bold text-xs mb-2">播放模式</p>
-                                        <p class="text-xs text-slate-500">支持列表循环、顺序播放、随机播放与单曲循环；也可以添加本地 MP3、OGG 或 WAV 到当前浏览器歌单。</p>
-                                    </div>
-                                    <div class="bg-dark-900/70 p-5 rounded-xl border border-dark-800">
-                                        <p class="text-amber-300 font-bold text-xs mb-2">浏览器自动播放限制</p>
-                                        <p class="text-xs text-slate-500">若浏览器阻止自动播放，完成一次点击或触摸后音乐会继续启动。音量、开关与播放模式会保存在当前浏览器。</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-
-                    <!-- Section: Radio/Friends -->
-                    <section class="relative group">
-                        <div class="absolute -left-4 top-0 bottom-0 w-1 bg-gradient-to-b from-blue-500/60 to-transparent rounded-full"></div>
-                        <div class="glass-panel p-8 md:p-12 rounded-3xl border border-blue-900/10">
-                            <h3 class="text-2xl font-bold text-blue-400 font-serif mb-8 flex items-center gap-4">
-                                <span class="bg-blue-900/10 p-3 rounded-2xl text-blue-400"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path></svg></span>
-                                第七章：多人联机与同伴
-                            </h3>
-                            <div class="space-y-6 text-sm text-slate-400 font-serif">
-                                <p>这不仅仅是好友系统，更是多人联机的桥梁：</p>
-                                <div class="p-6 bg-dark-900/80 rounded-2xl border border-dark-700 space-y-4">
-                                    <p><strong class="text-slate-200">建立连接：</strong> 每一个调查员都有一个唯一的 UUID（可在侧边栏底部复制）。输入同伴的 ID 即可发送链路申请。建立好友关系后，您可以实时查看对方的在线状态及当前所在的探险房间位置。</p>
-                                    <div class="h-px bg-dark-800"></div>
-                                    <p><strong class="text-slate-200">快速集结：</strong> 在聊天过程中，您可以随时打开多人模式，直接对正在线上的好友发起“战友召集（邀请）”。对方会收到一条跨宇宙通知，点击即可穿越到您的探险房间中。</p>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-
-                    <!-- Section: Archives -->
-                    <section class="relative group">
-                        <div class="absolute -left-4 top-0 bottom-0 w-1 bg-gradient-to-b from-purple-500/60 to-transparent rounded-full"></div>
-                        <div class="glass-panel p-8 md:p-12 rounded-3xl border border-purple-900/10">
-                            <h3 class="text-2xl font-bold text-purple-400 font-serif mb-8 flex items-center gap-4">
-                                <span class="bg-purple-900/10 p-3 rounded-2xl text-purple-400"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg></span>
-                                第八章：调查员档案
-                            </h3>
-                            <div class="space-y-8">
-                                <div class="bg-dark-900 shadow-xl border border-dark-800 p-8 rounded-xl relative overflow-hidden group/card transition-all hover:border-purple-500/30">
-                                    <div class="absolute top-0 right-0 w-32 h-32 bg-purple-500/5 rounded-full blur-3xl group-hover/card:bg-purple-500/10 transition-colors"></div>
-                                    <h4 class="text-slate-200 font-bold mb-4">创建您的化身</h4>
-                                    <p class="text-xs text-slate-500 font-serif leading-relaxed mb-6">点击「+ 创建调查员」按钮。在这张沉重的卷宗上，您可以定义：</p>
-                                    <ul class="text-xs space-y-3 text-slate-400">
-                                        <li class="flex items-center gap-2"><svg class="w-4 h-4 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> 基础属性（手动输入或点击「骰子图标」进行圣洁的投掷）</li>
-                                        <li class="flex items-center gap-2"><svg class="w-4 h-4 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> 头像图片（支持拖拽或选择上传）</li>
-                                        <li class="flex items-center gap-2"><svg class="w-4 h-4 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> 角色背景与初始资产</li>
-                                    </ul>
-                                    <div class="mt-8 flex gap-3 flex-wrap">
-                                        <span class="px-3 py-1 bg-dark-800 text-purple-400 text-[10px] rounded border border-purple-500/20">导出 PNG 实体卡</span>
-                                        <span class="px-3 py-1 bg-dark-800 text-purple-400 text-[10px] rounded border border-purple-500/20">导出 JSON 数据</span>
-                                        <span class="px-3 py-1 bg-dark-800 text-purple-400 text-[10px] rounded border border-purple-500/20">角色卡模板复用</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-
-                    <!-- Section: Library -->
-                    <section class="relative group border-b border-dark-800 pb-16">
-                        <div class="absolute -left-4 top-0 bottom-0 w-1 bg-gradient-to-b from-slate-500/60 to-transparent rounded-full"></div>
-                        <div class="glass-panel p-8 md:p-12 rounded-3xl border border-slate-900/10">
-                            <h3 class="text-2xl font-bold text-slate-300 font-serif mb-8 flex items-center gap-4">
-                                <span class="bg-slate-900/10 p-3 rounded-2xl text-slate-300"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg></span>
-                                第九章：密大图书馆
-                            </h3>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 text-sm text-slate-400 font-serif leading-relaxed">
-                                <div class="space-y-4">
-                                    <p class="text-slate-200 font-bold underline decoration-slate-500 decoration-2 underline-offset-4">借阅模组</p>
-                                    <p>在图书馆的海量书架上，您可以按照标签（现代、维多利亚、民俗等）进行筛选。点击任何一个模组卡片并选择「借阅模组」。该模组会自动同步到您的“仪式准备”列表中，等待开启。</p>
-                                </div>
-                                <div class="space-y-4">
-                                    <p class="text-slate-200 font-bold underline decoration-slate-500 decoration-2 underline-offset-4">贡献馆藏</p>
-                                    <p>如果您是一位博学的守秘人，可以点击上方状态栏的「创作」。您可以上传自己的剧本、设定封面和标签。审核通过后，全球各地的调查员都能借阅到您的杰作。</p>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-
-                    <!-- Section: Scales of Fate -->
-                    <section class="relative group border-b border-dark-800 pb-16">
-                        <div class="absolute -left-4 top-0 bottom-0 w-1 bg-gradient-to-b from-mystic-purple/60 to-transparent rounded-full shadow-[0_0_10px_rgba(168,85,247,0.3)]"></div>
-                        <div class="glass-panel p-8 md:p-12 rounded-3xl border border-mystic-purple/10 transition-all hover:border-mystic-purple/20">
-                            <h3 class="text-2xl font-bold text-mystic-purple font-serif mb-8 flex items-center gap-4">
-                                <span class="bg-mystic-purple/10 p-3 rounded-2xl text-mystic-purple"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg></span>
-                                第八章：命运天平 (Scales of Fate)
-                            </h3>
-                            <div class="space-y-6 text-slate-400 text-sm font-serif leading-relaxed">
-                                <p>在正式开启调查前，命运的权衡不可或缺。点击侧边栏的「命运天平」图标进入评估室。</p>
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                    <div class="space-y-4">
-                                        <p class="text-slate-200 font-bold flex items-center gap-2"><span class="w-2 h-2 bg-mystic-purple rounded-full"></span> 模组情报汇聚</p>
-                                        <p>点击「寻获模组卷宗」上传您的剧本。系统支持<strong>增量上传</strong>：您可以先后上传正文、NPC表、以及模组相关的插图。AI 视觉会自动转译图像中的氛围信息，使评估结果更客观。</p>
-                                    </div>
-                                    <div class="space-y-4">
-                                        <p class="text-slate-200 font-bold flex items-center gap-2"><span class="w-2 h-2 bg-mystic-purple rounded-full"></span> 调查员评估</p>
-                                        <p>您可以从现有档案库选择调查员，也可以直接通过「寻获新调查员」入口拖入其他地方导出的 JSON 角色卡。AI 将为您提供详尽的适配度诊断（等级 S 至 D）。</p>
-                                    </div>
-                                </div>
-                                <div class="mt-4 p-4 bg-mystic-purple/5 border border-mystic-purple/20 rounded-xl text-xs">
-                                    <span class="text-mystic-purple font-bold">小提示：</span> 如果您暂时没有合适的调查员，可以使用「初始创建建议」模式，AI 会基于当前模组背景为您推荐最契合的属性分配与职业方向。
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-                </div>
-            </div>
-            
-            <!-- Model Selector Modal -->
             <div v-if="activeModelPicker" class="fixed inset-0 z-[220] flex items-center justify-center p-3 md:p-5" role="dialog" aria-modal="true" aria-labelledby="model-selector-title">
                 <div class="absolute inset-0 bg-dark-950/85 backdrop-blur-md" @click="closeModelPicker"></div>
                 <div class="relative w-full max-w-2xl h-[min(82vh,680px)] max-h-[calc(100dvh-24px)] bg-dark-900/95 border border-emerald-500/25 rounded-2xl shadow-2xl overflow-hidden flex flex-col animate-slide-up">
@@ -4550,7 +4231,7 @@
                 <button type="button" @click="currentView = 'saves'; showMobileMenu = false" :class="{'z-mobile-nav-active': currentView === 'saves'}" aria-label="记忆回廊" title="记忆回廊">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-width="1.6" d="M5 8h14M5 8a2 2 0 1 0 0-4h14a2 2 0 1 0 0 4m-14 0v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8m-9 4h4"/></svg>
                 </button>
-                <button type="button" @click="currentView = 'archiveTools'; showMobileMenu = false" :class="{'z-mobile-nav-active': ['archiveTools', 'tavern', 'friends', 'broadcast', 'manual'].includes(currentView)}" aria-label="广播与手册" title="广播与手册">
+                <button type="button" @click="currentView = 'archiveTools'; showMobileMenu = false" :class="{'z-mobile-nav-active': ['archiveTools', 'tavern', 'friends', 'broadcast'].includes(currentView)}" aria-label="广播与资料" title="广播与资料">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="m12 3 9 5-9 5-9-5 9-5Zm-9 9 9 5 9-5M3 16l9 5 9-5"/></svg>
                 </button>
                 <button type="button" @click="currentView = 'chat'; showMobileMenu = false" :class="{'z-mobile-nav-active': currentView === 'chat'}" aria-label="聆听低语" title="聆听低语">
@@ -4849,6 +4530,10 @@
                 const backMobileSettings = () => {
                     mobileSettingsSection.value = 'menu';
                     scrollSettingsToTop();
+                };
+                const backFromArchiveChild = () => {
+                    currentView.value = window.matchMedia('(max-width: 767px)').matches ? 'archiveTools' : 'chat';
+                    showMobileMenu.value = false;
                 };
                 watch(currentView, (view) => {
                     if (view !== 'settings') mobileSettingsSection.value = 'menu';
@@ -8874,7 +8559,7 @@ ${buildInvestigatorProfile(inv)}
                 });
 
                 return {
-                    currentView, showMobileMenu, showMobileRightSidebar, mobileSettingsSection, mobileSettingsGroups, mobileSettingsTitle, openMobileSettingsSection, backMobileSettings, user, settings, toasts, confirmState, authState, cloudConnectionState, handleAuth, handleLogout, showBroadcast, dontShowBroadcast, closeBroadcast,
+                    currentView, showMobileMenu, showMobileRightSidebar, mobileSettingsSection, mobileSettingsGroups, mobileSettingsTitle, openMobileSettingsSection, backMobileSettings, backFromArchiveChild, user, settings, toasts, confirmState, authState, cloudConnectionState, handleAuth, handleLogout, showBroadcast, dontShowBroadcast, closeBroadcast,
                     kpRulesByCategory, editingRuleId, toggleRuleEdit, resetRule, addKpRule, deleteKpRule,
                     cocState, cocInput, cocInputRef, cocChatContainer, isGenerating, multiplayerState, showJoinInput, joinRoomId, friends, friendRequests, friendInput,
                     showMentionList, mentionCandidates, handleInput, selectMention, savedGames, savesFilter, groupedSaves, openFolders, toggleFolder, moveSaveToFolder, renameFolder, 
