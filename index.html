@@ -1922,6 +1922,40 @@
                 }
             }
         }
+
+        /* Full-height archive scenes: keep the art continuous behind the mobile nav. */
+        .z-system-ui .z-art-view {
+            overflow-x: hidden !important;
+        }
+        .z-system-ui .z-art-view:not(.z-art-settings)::before {
+            inset: 0 !important;
+            height: 100% !important;
+            background-image:
+                linear-gradient(180deg, rgba(2,5,13,.12) 0%, rgba(2,5,13,.34) 56%, rgba(2,5,13,.72) 100%),
+                linear-gradient(90deg, rgba(2,5,11,.68) 0%, var(--z-art-cool) 48%, var(--z-art-warm) 100%),
+                var(--z-art-image);
+            background-size: cover !important;
+            background-position: var(--z-art-position);
+            -webkit-mask-image: none !important;
+            mask-image: none !important;
+        }
+        @media (max-width: 767px) {
+            .z-system-ui .mobile-nav-safe:has(> .z-art-view:not(.z-art-chat):not(.z-art-coc)) {
+                padding-bottom: 0 !important;
+            }
+            .z-system-ui .mobile-nav-safe:has(> .z-art-view:not(.z-art-chat):not(.z-art-coc):not(.z-art-settings)) {
+                background: transparent !important;
+            }
+            .z-system-ui .mobile-nav-safe:has(> .z-art-view:not(.z-art-chat):not(.z-art-coc)) > .z-art-view:not(.z-art-chat):not(.z-art-coc) {
+                padding-bottom: calc(5.6rem + env(safe-area-inset-bottom)) !important;
+            }
+            .z-system-ui .z-art-view:not(.z-art-settings)::before {
+                background-position: var(--z-art-mobile-position);
+                opacity: .76 !important;
+                transform: none !important;
+                animation: none !important;
+            }
+        }
     </style>
 </head>
 <body class="z-system-ui selection:bg-teal-900 selection:text-teal-100">
