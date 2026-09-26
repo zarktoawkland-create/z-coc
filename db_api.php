@@ -136,18 +136,35 @@ function issue_auth_session($conn, $userId, $deviceId, $ttlDays, $maxSessions) {
         $stmt->execute();
         $stmt->close();
     }
-    $stmt = @$conn->prepare("SELECT id FROM user_sessions WHERE user_uuid = ? AND revoked_at IS NULL AND expires_at > NOW() ORDER BY last_seen_at DESC LIMIT 18446744073709551615 OFFSET ?");
+    $stmt = @$conn->prepare("SELECT id FROM user_sessions WHERE user_uuid = ? AND revoked_at IS NULL AND expires_at > NOW() ORDER BY last_seen_at DESC, id DESC LIMIT 18446744073709551615 OFFSET ?");
     if ($stmt) {
         $offset = max(0, (int)$maxSessions - 1);
         $stmt->bind_param('si', $userId, $offset);
         $stmt->execute();
-        $oldest = app_stmt_fetch_assoc($stmt);
+        // Collect every stale id instead of truncating by id range: id order and
+        // last_seen order diverge once sessions get touched, so a range delete
+        // could evict an active device.
+        $staleIds = [];
+        $result = method_exists($stmt, 'get_result') ? $stmt->get_result() : null;
+        if ($result) {
+            while ($row = $result->fetch_assoc()) { $staleIds[] = (int)$row['id']; }
+        } else {
+            $meta = $stmt->result_metadata();
+            if ($meta) {
+                $row = []; $refs = [];
+                while ($field = $meta->fetch_field()) { $row[$field->name] = null; $refs[] = &$row[$field->name]; }
+                call_user_func_array([$stmt, 'bind_result'], $refs);
+                while ($stmt->fetch()) { $staleIds[] = (int)$row['id']; }
+                $meta->free();
+            }
+        }
         $stmt->close();
-        if ($oldest) {
-            $delete = $conn->prepare("DELETE FROM user_sessions WHERE user_uuid = ? AND id <= ?");
+        if ($staleIds) {
+            $placeholders = implode(',', array_fill(0, count($staleIds), '?'));
+            $types = 's' . str_repeat('i', count($staleIds));
+            $delete = $conn->prepare("DELETE FROM user_sessions WHERE user_uuid = ? AND id IN ($placeholders)");
             if ($delete) {
-                $oldestId = (int)$oldest['id'];
-                $delete->bind_param('si', $userId, $oldestId);
+                $delete->bind_param($types, $userId, ...$staleIds);
                 $delete->execute();
                 $delete->close();
             }
