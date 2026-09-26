@@ -2260,8 +2260,8 @@
                 </button>
                 <button @click="currentView = 'friends'; showMobileMenu = false" :class="['z-sidebar-tab w-full flex items-center px-4 py-3.5 rounded-lg transition-all duration-300 font-bold tracking-wide border group relative overflow-hidden', currentView === 'friends' ? 'z-active bg-blue-900/20 border-blue-500/30 text-blue-400' : 'border-transparent text-slate-400 hover:text-slate-200 hover:bg-dark-800 hover:border-dark-700']">
                     <div class="absolute inset-0 bg-gradient-to-r from-blue-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                    <svg class="w-5 h-5 mr-3 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-                    <span class="relative z-10">收音机调频</span>
+                    <svg class="w-5 h-5 mr-3 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path></svg>
+                    <span class="relative z-10">App上线公告</span>
                 </button>
                 <button @click="currentView = 'broadcast'; showMobileMenu = false" :class="['z-sidebar-tab w-full flex items-center px-4 py-3.5 rounded-lg transition-all duration-300 font-bold tracking-wide border group relative overflow-hidden', currentView === 'broadcast' ? 'z-active bg-amber-900/10 border-amber-500/40 text-amber-500 shadow-glow-gold' : 'border-transparent text-slate-400 hover:text-slate-200 hover:bg-dark-800 hover:border-dark-700']">
                     <div class="absolute inset-0 bg-gradient-to-r from-amber-900/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
@@ -2315,7 +2315,7 @@
             </div>
         </div>
 
-        <!-- Broadcast Modal (Zarkto's Old Broadcast) -->
+        <!-- App Launch Announcement Modal -->
         <div v-if="showBroadcast" class="fixed inset-0 z-[300] bg-black/80 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in">
             <div class="bg-dark-900 border border-mystic-gold/50 rounded-xl shadow-[0_0_50px_rgba(212,175,55,0.15)] max-w-lg w-full flex flex-col relative overflow-hidden">
                 <div class="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-mystic-gold/10 to-transparent pointer-events-none"></div>
@@ -2324,58 +2324,32 @@
                 <div class="p-6 md:p-8 relative z-10">
                     <h3 class="text-2xl font-bold text-mystic-gold font-serif mb-2 flex items-center gap-3">
                         <svg class="w-8 h-8 animate-pulse-slow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path></svg>
-                        扎克托的旧日广播
+                        Z-COC App 正式上线公告
                     </h3>
                     <div class="text-xs text-slate-500 font-mono mb-6 uppercase tracking-widest border-b border-dark-700 pb-2 flex justify-between">
-                        <span>Frequency: 192.8 MHz</span>
-                        <span>Ver 1.3.0</span>
+                        <span>Release Notice</span>
+                        <span>App 1.3.0</span>
                     </div>
                     
                     <div class="prose prose-invert prose-sm max-w-none text-slate-300 font-serif leading-relaxed mb-6 max-h-[60vh] overflow-y-auto custom-scrollbar pr-2">
-                        <p>欢迎来到 <strong>Zarkto's Table</strong> (Ver 1.3.0)。</p>
-                        <p class="text-mystic-gold font-bold">1.3.0「深夜档案」现已上线：界面、云存档、移动端设置与环境声场完成统一升级。</p>
-                        <p>本次频段记录：</p>
-                        <ul class="list-disc pl-4 space-y-1 marker:text-mystic-gold">
-                            <li><strong>美术视觉重构</strong>：
-                                <ul class="list-none pl-2 text-xs text-slate-400 mt-1 space-y-1 border-l border-dark-700">
-                                    <li>• 全站采用斑驳金属、旧纸、织物与档案摄影素材，重做侧边栏、卡片、弹窗和页面背景。</li>
-                                    <li>• 启动动画、品牌标识、聆听低语、调查员档案与密大图书馆获得独立场景构图。</li>
-                                    <li>• 桌面端设置重新编排；移动端改为“目录 → 具体设置”的分级导航。</li>
-                                </ul>
-                            </li>
-                            <li><strong>私有模型与媒体系统</strong>：
-                                <ul class="list-none pl-2 text-xs text-slate-400 mt-1 space-y-1 border-l border-dark-700">
-                                    <li>• API 提供商下拉预设、三档模型路由、流式输出、温度与自定义连接预设已集中到设置中心。</li>
-                                    <li>• Nai2API 头像生图支持自定义地址、密钥、模型、尺寸与画师串。</li>
-                                    <li>• 环境留声机加入默认歌单、音量、顺序/随机/列表/单曲循环与「雨夜（街巷）」。</li>
-                                </ul>
-                            </li>
-                            <li><strong>云端与稳定性</strong>：账号数据可跨设备自动同步；联机继续使用自建 PHP/MySQL 与 HTTP 轮询，并修复云存档格式兼容、离线缓存及生产资源加载问题。</li>
+                        <p>欢迎接入 <strong>Zarkto's Table</strong>。</p>
+                        <p class="text-mystic-gold font-bold">Z-COC App 1.3.0 已正式上线：移动端适配、跨设备档案、多人联机与完整场景系统现已开放。</p>
+                        <p>本次正式上线包含：</p>
+                        <ul class="list-disc pl-4 space-y-2 marker:text-mystic-gold">
+                            <li><strong>沉浸式跑团</strong>：聆听低语、仪式准备与命运天平串起完整调查流程。</li>
+                            <li><strong>调查员档案</strong>：角色、资料与跑团记录可在记忆回廊中统一管理。</li>
+                            <li><strong>云端同步与联机</strong>：登录后跨设备同步档案，并继续使用房间与好友功能。</li>
+                            <li><strong>异闻创作与环境声场</strong>：异闻酒馆、环境留声机与广播资料共同扩展每次冒险。</li>
                         </ul>
-                        <div class="mt-4 pt-4 border-t border-dark-800">
-                            <p class="mb-2 font-bold text-slate-200">核心功能一览：</p>
-                            <ul class="list-disc pl-4 space-y-1 marker:text-mystic-gold text-xs text-slate-400">
-                                <li><strong>聆听低语</strong>：沉浸式多模态跑团。</li>
-                                <li><strong>云端档案</strong>：账号、调查员、跑团存档与创作记录跨设备同步。</li>
-                                <li><strong>私有 AI</strong>：自定义兼容接口、三档模型路由与 Nai2API 头像生图。</li>
-                                <li><strong>命运天平</strong>：模组背景与角色强度审阅。</li>
-                                <li><strong>异闻酒馆</strong>：基于记录的冒险文学改编。</li>
-                                <li><strong>密大图书馆</strong>：共研与开源资源枢纽。</li>
-                                <li><strong>环境留声机</strong>：内置歌单与多种循环模式。</li>
-                            </ul>
-                        </div>
-                        <div class="mt-6 p-4 bg-mystic-gold/5 border border-mystic-gold/20 rounded-lg text-xs text-mystic-gold/80 italic">“我们复活了！”</div>
-                        <div class="mt-4 text-xs text-slate-500 font-serif text-right">
-                            <p>Cheers,<br>Z4RKTO<br><em>Special thanks to STA1N</em></p>
-                        </div>
+                        <div class="mt-5 p-4 bg-mystic-gold/5 border border-mystic-gold/20 rounded-lg text-xs text-mystic-gold/80 italic">正式上线频段已开启。愿每位调查员保持理智，谨慎踏入未知。</div>
                     </div>
 
                     <div class="flex items-center justify-between pt-4 border-t border-dark-700">
                         <label class="flex items-center gap-2 cursor-pointer group">
                             <input type="checkbox" v-model="dontShowBroadcast" class="checkbox checkbox-xs border-slate-600 checked:border-mystic-gold checked:bg-mystic-gold rounded-sm transition-all" />
-                            <span class="text-xs text-slate-500 group-hover:text-slate-300 transition-colors select-none">不再收听此频段</span>
+                            <span class="text-xs text-slate-500 group-hover:text-slate-300 transition-colors select-none">不再显示此公告</span>
                         </label>
-                        <button @click="closeBroadcast" class="px-6 py-2 bg-mystic-gold hover:bg-yellow-600 text-dark-900 font-bold rounded shadow-lg shadow-mystic-gold/20 transition-all text-sm font-serif">关闭通讯</button>
+                        <button @click="closeBroadcast" class="px-6 py-2 bg-mystic-gold hover:bg-yellow-600 text-dark-900 font-bold rounded shadow-lg shadow-mystic-gold/20 transition-all text-sm font-serif">确认公告</button>
                     </div>
                 </div>
             </div>
@@ -3111,30 +3085,37 @@
                 </div>
             </div>
 
-            <!-- 5. Friends View -->
+            <!-- 5. App Launch Announcement View -->
             <div v-if="currentView === 'friends'" class="z-art-view z-art-friends h-full overflow-y-auto p-4 md:p-8 animate-fade-in bg-dark-950">
                 <div class="flex items-center gap-3 mb-8">
                     <button type="button" @click="backFromArchiveChild()" class="hidden md:flex items-center gap-2 px-2 py-1.5 -ml-2 text-slate-400 hover:text-mystic-gold transition-colors text-sm font-bold" aria-label="返回广播与资料目录">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
                         <span>返回资料目录</span>
                     </button>
-                    <h2 class="text-2xl font-bold text-mystic-gold font-serif">同伴名录</h2>
+                    <h2 class="text-2xl font-bold text-mystic-gold font-serif">App 正式上线公告</h2>
                 </div>
-                <div class="max-w-2xl mx-auto space-y-6">
-                    <div class="glass-panel p-4 md:p-6 rounded-lg shadow-sm flex flex-col md:flex-row gap-4 md:justify-between items-start md:items-center">
-                        <div class="w-full flex-1 min-w-0">
-                            <h3 class="font-bold text-lg text-slate-200 font-serif truncate">{{ user.name }}</h3>
-                            <div class="flex items-center gap-2 mt-1 w-full overflow-hidden">
-                                <p class="text-xs md:text-sm text-slate-500 font-mono select-all truncate">UID: {{ user.uuid }}</p>
-                                <button @click="copyToClipboard(user.uuid)" class="p-2 bg-dark-800 rounded hover:text-mystic-gold hover:bg-dark-700 transition-colors shrink-0" title="复制 UID">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
-                                </button>
+                <div class="max-w-3xl mx-auto space-y-6">
+                    <section class="z-ornamented-card glass-panel p-6 md:p-10 rounded-3xl border border-mystic-gold/20 relative overflow-hidden">
+                        <div class="absolute top-0 right-0 p-8 opacity-5 pointer-events-none"><svg class="w-36 h-36 text-mystic-gold" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2L2 7l10 5 10-5-10-5zm0 9l2.5-1.25L12 8.5l-2.5 1.25L12 11zm0 2.5l-5-2.5-5 2.5L12 22l10-8.5-5-2.5-5 2.5z"/></svg></div>
+                        <div class="relative z-10">
+                            <div class="text-[10px] uppercase tracking-[0.35em] text-mystic-gold/70 font-mono mb-3">Z-COC APP / OFFICIAL LAUNCH</div>
+                            <h3 class="text-3xl md:text-4xl font-bold text-slate-100 font-serif mb-5">Z-COC App 正式上线</h3>
+                            <p class="text-lg text-slate-200 font-serif leading-relaxed mb-5">欢迎接入 <span class="text-mystic-gold font-bold">Zarkto's Table</span>。经过长期校准，Z-COC App 1.3.0 已正式上线。现在，您可以在移动端与桌面端继续记录每一次探索。</p>
+                            <div class="p-5 bg-mystic-gold/5 border-l-4 border-mystic-gold/50 rounded-r-xl mb-6"><p class="text-mystic-gold font-bold italic">“从第一份调查记录，到最后一次骰点，档案将为您保留。”</p></div>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs font-mono">
+                                <div class="bg-dark-900/60 border border-dark-700 rounded-lg p-4"><div class="text-slate-500 uppercase tracking-widest mb-1">Release</div><div class="text-slate-200 font-bold">正式开放</div></div>
+                                <div class="bg-dark-900/60 border border-dark-700 rounded-lg p-4"><div class="text-slate-500 uppercase tracking-widest mb-1">Version</div><div class="text-slate-200 font-bold">1.3.0</div></div>
+                                <div class="bg-dark-900/60 border border-dark-700 rounded-lg p-4"><div class="text-slate-500 uppercase tracking-widest mb-1">Platforms</div><div class="text-slate-200 font-bold">移动端 / 桌面端</div></div>
                             </div>
                         </div>
-                        <div class="flex gap-2 w-full md:w-auto shrink-0 justify-end"><input v-model="friendInput" placeholder="输入同伴 ID" class="w-full md:w-auto bg-dark-900 border border-dark-600 text-slate-300 rounded px-3 py-1.5 text-sm focus:border-mystic-gold outline-none flex-1 md:flex-none"><button @click="addFriend" class="bg-dark-800 text-mystic-gold border border-mystic-gold/30 px-4 py-1.5 rounded text-sm font-bold hover:bg-mystic-gold hover:text-dark-900 transition-colors shrink-0 whitespace-nowrap">添加</button></div>
-                    </div>
-                    <div v-if="friendRequests.length > 0" class="space-y-2"><h4 class="font-bold text-xs text-slate-500 uppercase tracking-widest mb-2">收到的信号</h4><div v-for="req in friendRequests" :key="req.id" class="bg-dark-800 p-4 rounded border border-mystic-gold/30 flex justify-between items-center"><span class="font-bold text-slate-200 font-serif">{{ req.name }}</span><div class="flex gap-2"><button @click="acceptFriend(req)" class="px-3 py-1 text-xs bg-mystic-gold text-dark-900 rounded font-bold hover:bg-yellow-600">接受</button><button @click="rejectFriend(req)" class="px-3 py-1 text-xs bg-dark-700 text-slate-400 rounded hover:bg-dark-600">拒绝</button></div></div></div>
-                    <div class="space-y-3"><div v-for="friend in friends" :key="friend.uuid" class="glass-panel p-4 rounded border border-dark-700 flex justify-between items-center hover:border-slate-600 transition-colors"><div class="flex items-center gap-4"><div class="w-10 h-10 rounded bg-dark-800 overflow-hidden relative border border-dark-600"><img v-if="friend.avatar" :src="friend.avatar" :alt="`${friend.name || '好友'}的头像`" class="w-full h-full object-cover"><div v-if="friend.isOnline" class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-mystic-green border border-dark-900 rounded-full shadow-[0_0_8px_rgba(45,212,191,0.8)]"></div></div><div><div class="font-bold text-slate-200 font-serif">{{ friend.name }}</div><div class="text-xs font-mono" :class="friend.isOnline ? 'text-mystic-green' : 'text-slate-600'">{{ friend.isOnline ? '在线' : '离线' }}</div></div></div><button v-if="friend.isOnline" @click="inviteFriend(friend)" class="px-3 py-1.5 bg-dark-800 text-slate-300 border border-dark-600 rounded text-xs font-bold hover:text-mystic-gold hover:border-mystic-gold transition-colors uppercase tracking-wider">邀请</button></div><div v-if="friends.length === 0" class="text-center py-12 text-slate-600 border border-dashed border-dark-800 rounded bg-dark-900/20 font-serif italic">孤独是理智的最后防线...</div></div>
+                    </section>
+                    <section class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <article class="glass-panel p-5 rounded-2xl border border-dark-700"><div class="text-mystic-gold text-xs font-bold uppercase tracking-widest mb-2">01 / EXPERIENCE</div><h4 class="text-lg font-bold text-slate-100 font-serif mb-2">沉浸式跑团</h4><p class="text-sm text-slate-400 leading-relaxed">聆听低语、仪式准备与命运天平共同组成完整调查流程，让每一次骰点都留在同一份档案里。</p></article>
+                        <article class="glass-panel p-5 rounded-2xl border border-dark-700"><div class="text-mystic-green text-xs font-bold uppercase tracking-widest mb-2">02 / ARCHIVE</div><h4 class="text-lg font-bold text-slate-100 font-serif mb-2">调查员档案</h4><p class="text-sm text-slate-400 leading-relaxed">创建角色、保存调查资料，并在记忆回廊中管理跑团记录，随时回到上一次探索。</p></article>
+                        <article class="glass-panel p-5 rounded-2xl border border-dark-700"><div class="text-sky-300 text-xs font-bold uppercase tracking-widest mb-2">03 / CLOUD</div><h4 class="text-lg font-bold text-slate-100 font-serif mb-2">云端同步与联机</h4><p class="text-sm text-slate-400 leading-relaxed">登录账号后跨设备同步档案，使用房间与好友功能继续调查，云端状态会在顶部实时提示。</p></article>
+                        <article class="glass-panel p-5 rounded-2xl border border-dark-700"><div class="text-amber-300 text-xs font-bold uppercase tracking-widest mb-2">04 / ATMOSPHERE</div><h4 class="text-lg font-bold text-slate-100 font-serif mb-2">异闻创作与环境声场</h4><p class="text-sm text-slate-400 leading-relaxed">异闻酒馆、环境留声机及广播资料为每次冒险提供新的叙事入口，保持档案空间的完整氛围。</p></article>
+                    </section>
+                    <div class="text-center py-4 text-sm text-slate-500 font-serif italic">正式上线频段已开启。愿每位调查员保持理智，谨慎踏入未知。</div>
                 </div>
             </div>
 
@@ -3158,9 +3139,9 @@
                         </button>
                         <button type="button" class="settings-mobile-row" @click="currentView = 'friends'; showMobileMenu = false">
                             <span class="settings-mobile-icon" style="color:#d4af37;border-color:#d4af3738;background-color:#d4af3712">
-                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M17 20h5v-2a3 3 0 0 0-5.36-1.86M17 20H7m10 0v-2a5 5 0 0 0-10 0v2m3-13a3 3 0 1 0-6 0 3 3 0 0 0 6 0Zm13 3a2 2 0 1 0-4 0 2 2 0 0 0 4 0Z"/></svg>
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M11 5.88v13.36a1.76 1.76 0 0 1-3.42.59l-2.14-6.15A4 4 0 0 1 7 6h1.83c4.1 0 7.63-1.23 9.17-3v14c-1.77-1.77-5.06-3-9.17-3H7a4 4 0 0 1-1.56-.32M18 7a3 3 0 0 1 0 6"/></svg>
                             </span>
-                            <span class="settings-mobile-label">收音机调频</span>
+                            <span class="settings-mobile-label">App上线公告</span>
                             <svg class="settings-mobile-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                         </button>
                         <button type="button" class="settings-mobile-row" @click="currentView = 'broadcast'; showMobileMenu = false">
@@ -3914,14 +3895,14 @@
                         <div class="absolute top-0 right-0 p-8 opacity-5"><svg class="w-32 h-32 text-mystic-gold" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zm0 9l2.5-1.25L12 8.5l-2.5 1.25L12 11zm0 2.5l-5-2.5-5 2.5L12 22l10-8.5-5-2.5-5 2.5z"/></svg></div>
                         
                         <div class="prose prose-invert prose-lg max-w-none text-slate-300 font-serif leading-relaxed relative z-10">
-                            <p class="text-xl md:text-2xl text-slate-100 font-bold mb-6">欢迎来到 <span class="text-mystic-gold">Zarkto's Table</span></p>
+                            <p class="text-xl md:text-2xl text-slate-100 font-bold mb-6">欢迎接入 <span class="text-mystic-gold">Zarkto's Table</span></p>
                             <div class="p-6 bg-mystic-gold/5 border-l-4 border-mystic-gold/30 rounded-r-xl mb-8">
-                                <p class="text-mystic-gold font-bold italic mb-0">“1.3.0 将暗黑档案、跨设备云存档与私有模型工作流校准到了同一频段。”</p>
+                                <p class="text-mystic-gold font-bold italic mb-0">“Z-COC App 1.3.0 已正式上线，跨设备档案与完整场景系统现已开放。”</p>
                             </div>
 
                             <div class="space-y-8">
                                 <section>
-                                    <h4 class="text-slate-100 font-bold flex items-center gap-2 mb-4"><span class="w-2 h-2 bg-mystic-gold rounded-full"></span> 1.3.0 更新记录</h4>
+                                    <h4 class="text-slate-100 font-bold flex items-center gap-2 mb-4"><span class="w-2 h-2 bg-mystic-gold rounded-full"></span> App 正式上线公告</h4>
                                     <ul class="list-none space-y-4 pl-0">
                                         <li class="bg-dark-900/50 p-6 rounded-2xl border border-dark-800">
                                             <p class="text-mystic-gold font-bold text-sm mb-2 uppercase tracking-widest">美术视觉重构</p>
@@ -5669,7 +5650,7 @@
                     saveData();
                     showToast('文件夹已重命名', 'success');
                 };
-                const showBroadcast = ref(false); const dontShowBroadcast = ref(false); const currentVersion = '1.3.0';
+                const showBroadcast = ref(false); const dontShowBroadcast = ref(false); const currentVersion = '1.3.0-app-launch';
                 const checkBroadcast = () => { const lastReadVersion = localStorage.getItem('coc_broadcast_read_version'); const shownSessionVersion = sessionStorage.getItem('coc_broadcast_shown_version'); if (lastReadVersion !== currentVersion && shownSessionVersion !== currentVersion) { showBroadcast.value = true; sessionStorage.setItem('coc_broadcast_shown_version', currentVersion); } };
                 const closeBroadcast = () => { showBroadcast.value = false; if (dontShowBroadcast.value) localStorage.setItem('coc_broadcast_read_version', currentVersion); };
                 const openCocCard = () => { 
