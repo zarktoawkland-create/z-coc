@@ -2261,7 +2261,7 @@
                 <button @click="currentView = 'friends'; showMobileMenu = false" :class="['z-sidebar-tab w-full flex items-center px-4 py-3.5 rounded-lg transition-all duration-300 font-bold tracking-wide border group relative overflow-hidden', currentView === 'friends' ? 'z-active bg-blue-900/20 border-blue-500/30 text-blue-400' : 'border-transparent text-slate-400 hover:text-slate-200 hover:bg-dark-800 hover:border-dark-700']">
                     <div class="absolute inset-0 bg-gradient-to-r from-blue-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                     <svg class="w-5 h-5 mr-3 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path></svg>
-                    <span class="relative z-10">App上线公告</span>
+                    <span class="relative z-10">收音机调频</span>
                 </button>
                 <button @click="currentView = 'broadcast'; showMobileMenu = false" :class="['z-sidebar-tab w-full flex items-center px-4 py-3.5 rounded-lg transition-all duration-300 font-bold tracking-wide border group relative overflow-hidden', currentView === 'broadcast' ? 'z-active bg-amber-900/10 border-amber-500/40 text-amber-500 shadow-glow-gold' : 'border-transparent text-slate-400 hover:text-slate-200 hover:bg-dark-800 hover:border-dark-700']">
                     <div class="absolute inset-0 bg-gradient-to-r from-amber-900/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
@@ -3092,7 +3092,7 @@
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
                         <span>返回资料目录</span>
                     </button>
-                    <h2 class="text-2xl font-bold text-mystic-gold font-serif">App 正式上线公告</h2>
+                    <h2 class="text-2xl font-bold text-mystic-gold font-serif">收音机调频</h2>
                 </div>
                 <div class="max-w-3xl mx-auto space-y-6">
                     <section class="z-ornamented-card glass-panel p-6 md:p-10 rounded-3xl border border-mystic-gold/20 relative overflow-hidden">
@@ -3101,7 +3101,7 @@
                             <div class="text-[10px] uppercase tracking-[0.35em] text-mystic-gold/70 font-mono mb-3">Z-COC APP / OFFICIAL LAUNCH</div>
                             <h3 class="text-3xl md:text-4xl font-bold text-slate-100 font-serif mb-5">Z-COC App 正式上线</h3>
                             <p class="text-lg text-slate-200 font-serif leading-relaxed mb-5">欢迎接入 <span class="text-mystic-gold font-bold">Zarkto's Table</span>。经过长期校准，Z-COC App 1.3.0 已正式上线。现在，您可以在移动端与桌面端继续记录每一次探索。</p>
-                            <div class="p-5 bg-mystic-gold/5 border-l-4 border-mystic-gold/50 rounded-r-xl mb-6"><p class="text-mystic-gold font-bold italic">“从第一份调查记录，到最后一次骰点，档案将为您保留。”</p></div>
+                            <div class="p-5 bg-mystic-gold/5 border-l-4 border-mystic-gold/50 rounded-r-xl mb-6"><p class="text-mystic-gold font-bold italic">“感谢您的支持和体验。”</p></div>
                             <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs font-mono">
                                 <div class="bg-dark-900/60 border border-dark-700 rounded-lg p-4"><div class="text-slate-500 uppercase tracking-widest mb-1">Release</div><div class="text-slate-200 font-bold">正式开放</div></div>
                                 <div class="bg-dark-900/60 border border-dark-700 rounded-lg p-4"><div class="text-slate-500 uppercase tracking-widest mb-1">Version</div><div class="text-slate-200 font-bold">1.3.0</div></div>
@@ -3141,7 +3141,7 @@
                             <span class="settings-mobile-icon" style="color:#d4af37;border-color:#d4af3738;background-color:#d4af3712">
                                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M11 5.88v13.36a1.76 1.76 0 0 1-3.42.59l-2.14-6.15A4 4 0 0 1 7 6h1.83c4.1 0 7.63-1.23 9.17-3v14c-1.77-1.77-5.06-3-9.17-3H7a4 4 0 0 1-1.56-.32M18 7a3 3 0 0 1 0 6"/></svg>
                             </span>
-                            <span class="settings-mobile-label">App上线公告</span>
+                            <span class="settings-mobile-label">收音机调频</span>
                             <svg class="settings-mobile-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                         </button>
                         <button type="button" class="settings-mobile-row" @click="currentView = 'broadcast'; showMobileMenu = false">
@@ -5774,12 +5774,17 @@ const pullFromCloud = async ({ clearWhenEmpty = false } = {}) => {
         if (!res.ok) throw new Error((data && data.message) || `Pull failed: ${res.status}`);
         if (!data) {
             if (clearWhenEmpty) {
-                await Promise.all([dbReplaceAllSaves([]), dbSaveInvestigators([])]);
-                cocState.investigators = [];
-                tavernState.savedNovels = [];
-                savedGames.value = [];
-                user.name = '无名调查员';
-                user.avatar = '';
+                const hasLocalData = savedGames.value.length > 0 || cocState.investigators.length > 0 || tavernState.savedNovels.length > 0;
+                if (hasLocalData) {
+                    showToast('云端暂无档案：本地数据已保留，并将在稍后自动上传到云端。', 'info');
+                } else {
+                    await Promise.all([dbReplaceAllSaves([]), dbSaveInvestigators([])]);
+                    cocState.investigators = [];
+                    tavernState.savedNovels = [];
+                    savedGames.value = [];
+                    user.name = '无名调查员';
+                    user.avatar = '';
+                }
             }
             cloudSyncRevision = 0;
             cloudSyncConflict = false;
@@ -8587,7 +8592,7 @@ ${buildInvestigatorProfile(inv)}
                     charReviewState, startCharReview, importReviewModule, importReviewInvestigator,
                     toggleReady, allPlayersReady, handleInvestigatorClick, toggleAiPlayer,
                     openLibrary, openCocCard,
-                    hasCot, getCotContent, removeCot, toggleCot, regenerateLastResponse, lastAssistantIndex, statDisplayMap, sanitizeBadgeIcon, formatStLog, parseStLogDiff,
+                    hasCot, getCotContent, removeCot, toggleCot, regenerateLastResponse, lastAssistantIndex, regenerateAiMessage, statDisplayMap, sanitizeBadgeIcon, formatStLog, parseStLogDiff,
                     settlementState, openSettlement, confirmEndGame, rollSanReward, processSkillGrowth, confirmSettlement,
                     tavernState, importTavernSave, generateNovel, saveNovel, deleteNovel, viewNovel, exportNovel,
                     exportCurrentInvestigatorJSON, exportCurrentInvestigatorPNG, downloadReport, canViewReport,
