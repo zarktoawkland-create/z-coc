@@ -457,7 +457,7 @@
         }
         @media (max-width: 767px) {
             .z-system-ui .workshop-header { margin: 7px 8px 0; width: calc(100% - 16px); min-height: 52px; height: 52px; border-radius: 18px; }
-            .z-system-ui .workshop-main { padding: 14px 12px 24px; }
+            .z-system-ui .workshop-main { padding: 14px 12px calc(24px + 96px + env(safe-area-inset-bottom)); }
             .z-system-ui .card { border-radius: 20px; }
             .z-system-ui .card-body { padding: 1rem; }
             .workshop-art-banner { height: 116px; border-radius: 18px; background-position: center, center, 40% 45%; }
@@ -2265,6 +2265,7 @@
                 };
                 characters.value.push(newChar);
                 activeIndex.value = characters.value.length - 1;
+                localStorage.setItem('ai_chargen_active_index_coc', activeIndex.value);
                 cocGenMode.value = 'pointBuy'; // Default to Point Buy for new characters
                 syncCurrentCharacter();
                 // Close drawer on mobile
