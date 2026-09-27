@@ -13,6 +13,8 @@ www/
 tmp/
 assets/art/**/*.png
 assets/art/**/*.tif
+# Runtime asset: the settings/archive background is referenced by index.html and must stay tracked.
+!assets/art/generated/settings-archive-background-v1.png
 
 # Retained design alternatives that are not referenced by the production pages.
 assets/art/generated/archive-index-tab.webp

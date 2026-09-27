@@ -32,3 +32,14 @@ assets/art/user-edited/tavern-candle-archive-edited.webp
 *.log
 Dockerfile*
 !Dockerfile
+
+# Frontend build output and native app projects never belong in the PHP API image.
+# Without these, a locally built www/ ships a second frontend reachable at /www/.
+www
+android
+.github
+docker-compose.yml
+.dockerignore
+.gitattributes
+DEPLOY_SELF_HOSTED.md
+MOBILE_APP.md
