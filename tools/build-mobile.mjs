@@ -16,7 +16,7 @@ for (const directory of ['assets', 'dl', 'Library', 'Workshop']) {
     await cp(path.join(projectRoot, directory), path.join(outputRoot, directory), { recursive: true });
 }
 
-for (const file of ['index.html', '404.html', 'favicon.svg', 'manifest.json']) {
+for (const file of ['index.html', '404.html', 'favicon.svg', 'manifest.json', 'sw.js']) {
     await copyFile(path.join(projectRoot, file), path.join(outputRoot, file));
 }
 
