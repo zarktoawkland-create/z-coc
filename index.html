@@ -2004,8 +2004,16 @@
             };
             const onAppMounted = () => {
                 appMounted = true;
-                window.clearTimeout(safetyTimer);
-                if (mountRequested) requestAnimationFrame(() => requestAnimationFrame(finishLaunch));
+                if (mountRequested) {
+                    // requestAnimationFrame is throttled/paused in background tabs
+                    // and suspended webviews, so keep the safety timer armed as a
+                    // fallback. finishLaunch is idempotent via the closed flag.
+                    safetyTimer = window.setTimeout(finishLaunch, 450);
+                    requestAnimationFrame(() => requestAnimationFrame(() => {
+                        window.clearTimeout(safetyTimer);
+                        finishLaunch();
+                    }));
+                }
             };
             const skipLaunch = () => {
                 window.clearTimeout(settleTimer);
@@ -3129,6 +3137,10 @@
                     <span class="text-[10px] text-slate-600 font-mono">ZARKTO / REFERENCE NODE</span>
                 </div>
                 <div class="settings-mobile-menu md:hidden" aria-label="广播与资料目录">
+                    <div class="px-5 pt-2 pb-3 md:hidden">
+                        <div class="text-[10px] uppercase tracking-[0.3em] text-emerald-400/70 font-mono mb-1">Archive Reference Index</div>
+                        <h2 class="text-xl font-bold text-slate-100 font-serif">广播与资料</h2>
+                    </div>
                     <div class="settings-mobile-group">
                         <button type="button" class="settings-mobile-row" @click="currentView = 'tavern'; showMobileMenu = false">
                             <span class="settings-mobile-icon" style="color:#d4af37;border-color:#d4af3738;background-color:#d4af3712">
@@ -3221,9 +3233,9 @@
 
                             <div class="flex items-center gap-2">
                                 <span class="text-xs text-slate-500 whitespace-nowrap">云端标识码 (UUID)</span>
-                                <code class="flex-1 text-xs text-slate-400 font-mono overflow-hidden truncate bg-dark-900 px-2 py-1 rounded">{{ user.uuid }}</code>
-                                <button @click="copyToClipboard(user.uuid)" class="p-1.5 bg-dark-900 border border-dark-600 rounded hover:border-mystic-gold hover:text-mystic-gold transition-colors cursor-pointer z-10" title="复制 UUID">
-                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+                                <code class="flex-1 text-xs text-slate-400 font-mono bg-dark-900 px-2 py-1.5 rounded break-all select-all" :title="user.uuid">{{ user.uuid }}</code>
+                                <button @click="copyToClipboard(user.uuid)" class="p-2 min-w-[36px] min-h-[36px] flex items-center justify-center bg-dark-900 border border-dark-600 rounded hover:border-mystic-gold hover:text-mystic-gold transition-colors cursor-pointer z-10" title="复制 UUID" aria-label="复制 UUID">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
                                 </button>
                             </div>
                         </div>
@@ -6883,7 +6895,7 @@ ${buildInvestigatorProfile(inv)}
                     }
                     showToast('图片资料已追加', 'success');
                 };
-                const saveManualModule = () => { if (!cocState.tempModuleText) return; cocState.module = { name: '手动模组', content: cocState.tempModuleText }; showToast('模组保存成功', 'success'); if (cocState.mode === 'multi' && multiplayerState.isHost) broadcastMessage({ type: 'sync_module', moduleName: cocState.module.name }); };
+                const saveManualModule = () => { if (!cocState.tempModuleText) return; cocState.module = { name: '手动模组', content: cocState.tempModuleText }; try { localStorage.setItem('coc_manual_module', JSON.stringify(cocState.module)); } catch (e) { /* storage full: keep in memory */ } showToast('模组保存成功', 'success'); if (cocState.mode === 'multi' && multiplayerState.isHost) broadcastMessage({ type: 'sync_module', moduleName: cocState.module.name }); };
                 const importInvestigator = async (e) => { 
                     const file = e.target.files[0]; if (!file) return;
                     try { 
@@ -6993,6 +7005,7 @@ ${buildInvestigatorProfile(inv)}
                         showToast('已生成测试报告', 'success');
                         
                     } else {
+                        showToast('正在请求守密人结算本次冒险…', 'info');
                         cocInput.value = "确认结团，并查看其他结局，以及状态变化和可获得物品、可成长技能。";
                         sendCocMessage();
                     }
@@ -8546,6 +8559,20 @@ ${buildInvestigatorProfile(inv)}
 
                 onMounted(async () => {
                     await loadData();
+                    // 手动录入的模组只存内存，reload 后从 localStorage 恢复，
+                    // 让“导入模组 → 中途退出再回来”的流程不中断。
+                    if (!cocState.module) {
+                        try {
+                            const savedModule = localStorage.getItem('coc_manual_module');
+                            if (savedModule) {
+                                const parsed = JSON.parse(savedModule);
+                                if (parsed && typeof parsed.content === 'string' && parsed.content.trim()) {
+                                    cocState.module = { name: parsed.name || '手动模组', content: parsed.content };
+                                    cocState.tempModuleText = parsed.content;
+                                }
+                            }
+                        } catch (e) { /* corrupted entry: ignore */ }
+                    }
                     await loadBgmFromStorage();
                     applyDisplaySettings();
                     refreshStorageStats();
