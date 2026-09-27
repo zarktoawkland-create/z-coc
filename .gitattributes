@@ -1,0 +1,18 @@
+# Normalize all text files to LF so the repo is line-ending-stable across platforms.
+* text=auto eol=lf
+
+# Scripts that break when checked out with CRLF (gradlew is run by shell on CI/Linux).
+*.sh eol=lf
+gradlew eol=lf
+
+# Binary assets must never be text-normalized.
+*.png binary
+*.webp binary
+*.mp3 binary
+*.wav binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.jar binary
+*.keystore binary
+*.jks binary
