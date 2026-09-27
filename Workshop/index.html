@@ -1843,7 +1843,7 @@
         </div> <!-- End Drawer Wrapper -->
 
         <!-- Toast Container -->
-        <div class="toast toast-center toast-top toast-container-custom p-0 gap-2 pointer-events-none flex flex-col items-center" style="z-index: 9999; top: 1rem;">
+        <div class="toast-container-custom p-0 gap-2 pointer-events-none flex flex-col items-center" style="z-index: 9999; top: max(12px, env(safe-area-inset-top)); position: fixed; left: 50%; transform: translateX(-50%); width: max-content; max-width: min(400px, 92vw); right: auto;">
             <transition-group name="toast">
                 <div v-for="toast in toasts" :key="toast.id"
                      class="alert shadow-xl backdrop-blur-xl border border-white/10 text-white min-w-[200px] max-w-[85vw] sm:max-w-md rounded-full py-3 px-6 flex items-center justify-center pointer-events-auto"

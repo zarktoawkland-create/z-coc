@@ -2044,8 +2044,8 @@
     <div id="app" v-cloak :class="{ 'immersive-mode': settings.immersiveMode && currentView === 'chat' }" class="h-full flex flex-col md:flex-row relative bg-dark-950 text-slate-300">
         
         <!-- Toast Notification -->
-        <!-- Toast Notification - 移动到右下角并极大提高 z-index 避免遮挡，手机端居中 -->
-        <div class="fixed bottom-6 left-1/2 -translate-x-1/2 md:left-auto md:right-8 md:translate-x-0 md:bottom-8 z-[100000] flex flex-col gap-2 pointer-events-none items-center md:items-end w-full max-w-[min(400px,92%)] safe-pb">
+        <!-- Toast Notification - 统一顶部居中，避开移动端底部导航与游戏输入区 -->
+        <div class="fixed left-1/2 -translate-x-1/2 z-[100000] flex flex-col gap-2 pointer-events-none items-center w-full max-w-[min(400px,92%)]" style="top: max(12px, env(safe-area-inset-top));">
             <transition-group name="list" tag="div" class="flex flex-col items-center md:items-end w-full">
                 <div v-for="toast in toasts" :key="toast.id"
                      class="pointer-events-none flex items-center px-4 py-3 rounded-xl shadow-[0_10px_30px_rgba(0,0,0,0.3)] border bg-dark-900/45 backdrop-blur-sm text-sm font-medium w-full animate-message-in mb-2"
