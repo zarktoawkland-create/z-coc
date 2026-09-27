@@ -45,7 +45,7 @@ APP_ALLOWED_ORIGINS=https://app.example.com,https://preview.example.com
 4. 确认构建日志显示使用根目录 Dockerfile，网站端口为 8080。
 5. 为网站服务生成临时 `*.zeabur.app` 域名；不要为 MySQL 绑定公网域名。
 6. 访问 `/health.php`，应返回 `{"status":"ok"}`。
-7. 生产数据库先执行 `migrations/001_initial.sql`，让表结构和版本记录可审计；旧安装仍可由接口兼容升级。
+7. 生产数据库先按文件名顺序执行 `migrations/001_initial.sql` 和 `migrations/002_legacy_auth_token_index.sql`，让表结构、索引和版本记录可审计；旧安装仍可由接口兼容升级。
 8. 用测试账号完成注册、保存、退出、另一浏览器登录和恢复数据的回归测试。
 9. 验证后再绑定正式域名并启用数据库自动备份。
 
@@ -57,7 +57,7 @@ APP_ALLOWED_ORIGINS=https://app.example.com,https://preview.example.com
 2. 在项目中点击“新建服务”，从同一个仓库创建 `z-coc-api`，让它使用根目录 `Dockerfile`，容器端口保持 `8080`。
 3. 在 `z-coc-api` 的“整合”中连接已有的 `mysql` 服务，确认注入 `MYSQL_HOST`、`MYSQL_PORT`、`MYSQL_USERNAME`、`MYSQL_PASSWORD` 和 `MYSQL_DATABASE`。不要新建第二个 MySQL。
 4. 为 `z-coc-api` 生成临时域名，先访问 `/health.php?probe=live` 和 `/health.php`，确认进程和数据库都正常。
-5. 在 MySQL 服务的“命令”或数据库控制台中执行 `migrations/001_initial.sql`。执行前先做一次数据库备份。
+5. 在 MySQL 服务的“命令”或数据库控制台中按文件名顺序执行 `migrations/001_initial.sql` 和 `migrations/002_legacy_auth_token_index.sql`。执行前先做一次数据库备份。
 6. 先让 App 指向新 API，编辑 `assets/js/runtime-config.js`：
 
 ```js
