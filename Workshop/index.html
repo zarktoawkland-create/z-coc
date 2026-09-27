@@ -3924,7 +3924,7 @@ JSON 结构如下：
                 } catch (e) {
                     if (e.name !== 'AbortError') {
                         console.error(e);
-                        alert('生成失败: ' + e.message);
+                        showToast('生成失败: ' + e.message, 'error');
                         generationStatus.value = '生成失败';
                     }
                 } finally {
@@ -3978,7 +3978,7 @@ JSON 结构如下：
 
             const exportPNG = async () => {
                 if (!coc.avatar) {
-                    alert('请先上传或生成一张头像');
+                    showToast('请先上传或生成一张头像', 'warning');
                     return;
                 }
 

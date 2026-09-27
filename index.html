@@ -2110,10 +2110,14 @@
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
                         {{ confirmState.title || '确认操作' }}
                     </h3>
-                    <p class="text-slate-300 text-sm leading-relaxed mb-6 font-serif">{{ confirmState.message }}</p>
+                    <p class="text-slate-300 text-sm leading-relaxed mb-4 font-serif">{{ confirmState.message }}</p>
+                    <input v-if="confirmState.inputMode" v-model="confirmState.inputValue" type="text" :placeholder="confirmState.inputPlaceholder"
+                           class="w-full bg-dark-800 border border-dark-600 focus:border-mystic-gold rounded px-3 py-2.5 text-sm text-slate-200 mb-5 outline-none transition-colors"
+                           @keydown.enter="resolveConfirm(true)" ref="confirmInput" />
+                    <div v-else class="mb-2"></div>
                     <div class="flex justify-end gap-3">
-                        <button @click="confirmState.resolve(false); confirmState.show = false" class="px-4 py-2 text-slate-400 hover:text-slate-200 text-sm font-bold transition-colors">{{ confirmState.cancelText || '取消' }}</button>
-                        <button @click="confirmState.resolve(true); confirmState.show = false" class="px-6 py-2 bg-mystic-gold text-dark-950 font-bold rounded shadow-lg hover:bg-yellow-600 transition-all text-sm uppercase tracking-wide">{{ confirmState.confirmText || '确定' }}</button>
+                        <button @click="resolveConfirm(false)" class="px-4 py-2 text-slate-400 hover:text-slate-200 text-sm font-bold transition-colors">{{ confirmState.cancelText || '取消' }}</button>
+                        <button @click="resolveConfirm(true)" class="px-6 py-2 bg-mystic-gold text-dark-950 font-bold rounded shadow-lg hover:bg-yellow-600 transition-all text-sm uppercase tracking-wide">{{ confirmState.confirmText || '确定' }}</button>
                     </div>
                 </div>
             </div>
@@ -3673,7 +3677,7 @@
                                     <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                                     添加规则
                                 </button>
-                                <button @click="if(confirm('确定要重置所有守密人规则吗？')) { settings.kpRules = JSON.parse(JSON.stringify(DEFAULT_KP_RULES)); saveData(); showToast('已重置所有规则', 'info'); }" 
+                                <button @click="resetAllKpRules()"
                                         class="text-[10px] bg-dark-800 px-3 py-1 rounded border border-dark-700 text-slate-400 hover:text-mystic-purple transition-colors">全部重置</button>
                             </div>
                         </h3>
@@ -4566,7 +4570,7 @@
                     if (view !== 'settings') mobileSettingsSection.value = 'menu';
                 });
                 const toasts = ref([]);
-                const confirmState = reactive({ show: false, title: '', message: '', confirmText: '确定', cancelText: '取消', resolve: null });
+                const confirmState = reactive({ show: false, title: '', message: '', confirmText: '确定', cancelText: '取消', resolve: null, inputMode: false, inputValue: '', inputPlaceholder: '' });
                 const settlementState = reactive({ show: false, showReportModal: false, currentReports: [], moduleName: '', sanRewardExpr: '1d6', sanRewardVal: 0, skillGrowths: [], specialReward: '', badge: { name: '', desc: '', icon: '🏅' }, historyLog: '', step: 1, selectedSkills: [], skillSearch: '', customSkillName: '', isRolling: false });
                 const tavernState = reactive({ view: 'create', sourceData: null, settings: { style: '洛夫克拉夫特式 (悬疑/晦涩)', perspective: '第三人称全知' }, isGenerating: false, generatedContent: '', novelTitle: '', savedNovels: [] });
                 const isLocalDev = ['localhost', '127.0.0.1', '::1', '[::1]'].includes(window.location.hostname) || window.location.protocol === 'file:';
@@ -4595,6 +4599,15 @@
                 });
 
                 const showConfirm = (message, title = '确认操作') => { return new Promise((resolve) => { confirmState.message = message; confirmState.title = title; confirmState.show = true; confirmState.resolve = resolve; }); };
+                const showPrompt = (message, title = '请输入', placeholder = '') => { return new Promise((resolve) => { confirmState.message = message; confirmState.title = title; confirmState.inputMode = true; confirmState.inputValue = ''; confirmState.inputPlaceholder = placeholder; confirmState.show = true; confirmState.resolve = resolve; }); };
+                const resolveConfirm = (ok) => {
+                    const value = confirmState.inputMode && ok ? String(confirmState.inputValue || '').trim() : ok;
+                    const resolve = confirmState.resolve;
+                    confirmState.show = false;
+                    confirmState.inputMode = false;
+                    confirmState.resolve = null;
+                    if (resolve) resolve(value);
+                };
                 const user = reactive({ name: '无名调查员', avatar: '', uuid: generateUUID() });
                 const DEFAULT_KP_RULES = [
                     { id: 'role', category: '核心角色', label: '守密人身份设定', content: '你现在是《克苏鲁的呼唤》(Call of Cthulhu 7th Edition) 的 Keeper (守密人)。你正在主持一场沉浸式的跑团游戏。你的目标是为调查员们编织一场惊心动魄、充满悬疑与未知的冒险。', enabled: true },
@@ -5335,6 +5348,12 @@
                         showToast('已删除个性化规则', 'info');
                     }
                 };
+                const resetAllKpRules = async () => {
+                    if (!await showConfirm('确定要重置所有守密人规则吗？', '全部重置')) return;
+                    settings.kpRules = JSON.parse(JSON.stringify(DEFAULT_KP_RULES));
+                    saveData();
+                    showToast('已重置所有规则', 'info');
+                };
                 const resetRule = (ruleId) => {
                     const rule = settings.kpRules.find(r => r.id === ruleId);
                     const defaultRule = DEFAULT_KP_RULES.find(r => r.id === ruleId);
@@ -5365,11 +5384,13 @@
                 const removeCot = (text) => { const s = ensureString(text); if (!s) return ''; let clean = s.replace(/<cot>[\s\S]*?(?:<\/cot>|<cot>)/g, '').trim(); if (clean.includes('<cot>')) clean = clean.split('<cot>')[0].trim(); return clean; };
                 const toggleCot = async (index) => { if (cocState.mode === 'multi' && !multiplayerState.isHost && !multiplayerState.cotAuthorizedUsers.includes(multiplayerState.myId || user.uuid)) { if (await showConfirm('您没有权限查看思维链 (CoT)。是否向房主申请权限？', '申请权限')) requestCotAccess(); return; } const msg = cocState.log[index]; if (msg) msg.showCot = !msg.showCot; };
                 const requestCotAccess = () => { if (!multiplayerState.inRoom) return; broadcastMessage({ type: 'request_cot_access', userId: multiplayerState.myId || user.uuid, userName: user.name }); showToast('已发送权限申请', 'info'); };
-                const saveApiPreset = () => {
+                const saveApiPreset = async () => {
                     if (!settings.customApiUrl) return showToast('请输入 API 地址', 'warning');
-                    const name = prompt('为当前配置命名 (例如: DeepSeek-V3):');
+                    // window.prompt is silently blocked in Capacitor/Android webviews;
+                    // use the in-app dialog so the flow never dead-ends on mobile.
+                    const name = await showPrompt('为当前配置命名 (例如: DeepSeek-V3):', '保存连接预设', '预设名称');
                     if (!name) return;
-                    
+
                     const newPreset = {
                         id: Date.now(),
                         name: name,
@@ -5380,7 +5401,7 @@
                         balancedModel: getApiModel('balanced'),
                         fastModel: getApiModel('fast')
                     };
-                    
+
                     if (!settings.apiPresets) settings.apiPresets = [];
                     settings.apiPresets.push(newPreset);
                     saveData();
@@ -8607,7 +8628,7 @@ ${buildInvestigatorProfile(inv)}
 
                 return {
                     currentView, showMobileMenu, showMobileRightSidebar, mobileSettingsSection, mobileSettingsGroups, mobileSettingsTitle, openMobileSettingsSection, backMobileSettings, backFromArchiveChild, user, settings, toasts, confirmState, authState, cloudConnectionState, handleAuth, handleLogout, showBroadcast, dontShowBroadcast, closeBroadcast,
-                    kpRulesByCategory, editingRuleId, toggleRuleEdit, resetRule, addKpRule, deleteKpRule,
+                    kpRulesByCategory, editingRuleId, toggleRuleEdit, resetRule, addKpRule, deleteKpRule, resetAllKpRules, resolveConfirm,
                     cocState, cocInput, cocInputRef, cocChatContainer, isGenerating, multiplayerState, showJoinInput, joinRoomId, friends, friendRequests, friendInput,
                     showMentionList, mentionCandidates, handleInput, selectMention, savedGames, savesFilter, groupedSaves, openFolders, toggleFolder, moveSaveToFolder, renameFolder, 
                     isSavesEditing, toggleSavesEditMode, moveFolder, deleteFolder, editFolderName, promptMoveToFolder, folderManagementState, closeFolderModal, confirmFolderAction, 
