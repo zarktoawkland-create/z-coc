@@ -210,17 +210,15 @@ function require_user_token($conn, $userId) {
     }
 
     // Compatibility path for tokens issued before user_sessions existed.
+    // Read-only: the legacy plaintext token may still be in active use by the
+    // original website backend, so it must never be rewritten in place. New
+    // logins always issue a hashed user_sessions row instead.
     $stmt = $conn->prepare("SELECT auth_token FROM users WHERE user_uuid = ? AND (auth_token = ? OR auth_token = ?) LIMIT 1");
     $stmt->bind_param('sss', $userId, $tokenHash, $token);
     $stmt->execute();
     $user = app_stmt_fetch_assoc($stmt);
     if (!$user) {
         app_json_response(['status' => 'error', 'message' => 'Login expired'], 401);
-    }
-    if (hash_equals((string)$user['auth_token'], $token)) {
-        $migrate = $conn->prepare("UPDATE users SET auth_token = ? WHERE user_uuid = ?");
-        $migrate->bind_param('ss', $tokenHash, $userId);
-        $migrate->execute();
     }
     return $token;
 }
@@ -253,11 +251,6 @@ function authenticated_user($conn) {
     $stmt->execute();
     $user = app_stmt_fetch_assoc($stmt);
     if (!$user) app_json_response(['status' => 'error', 'message' => 'Login expired'], 401);
-    if (hash_equals((string)$user['auth_token'], $token)) {
-        $migrate = $conn->prepare("UPDATE users SET auth_token = ? WHERE user_uuid = ?");
-        $migrate->bind_param('ss', $tokenHash, $user['user_uuid']);
-        $migrate->execute();
-    }
     return [$user, $tokenHash];
 }
 
